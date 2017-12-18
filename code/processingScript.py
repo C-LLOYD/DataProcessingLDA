@@ -34,8 +34,10 @@ from FilterFunctions import Filter
 #
 ##	2.	import txt file: Give a hard coded name for now
 writeData = True
+testProfiles = True
 #
-rawPath = 	["../data/rawData/smoothPlate/4Hz/x400/171211_4Hz_x400/*.txt"]
+#rawPath = 	["../data/rawData/smoothPlate/4Hz/x400/171211_4Hz_x400/*.txt"]
+rawPath = 	["../data/rawData/smoothPlate/8Hz/x400/171214_8Hz_x400/*.txt"]
 #
 #writePath = 	["../Data/processedData/dataFrames/4hz_300mm_profiles.pkl",
 #			"../Data/processedData/dataFrames/4hz_400mm_profiles.pkl",
@@ -58,6 +60,7 @@ if writeData == True:
 		data = []
 #		print(rawPath[j])
 		for fileName in glob.glob(rawPath[j]):
+			print(fileName)
 			td = txtToDataFrame(fileName)
 #			print(	td.NXYZ[1],
 #					td.NXYZ[3], 
@@ -72,17 +75,36 @@ if writeData == True:
 #			print(len(td.)
 #
 ##	3.	filter data
-			if isinstance(tempData,pd.DataFrame):
-				tempData = Filter(tempData,'movingAverageFilter','mean',10,'none','none')
+			if isinstance(td,pd.DataFrame):
+				tempData = Filter(td,'movingAverageFilter','mean',100,'none','none')
+	#		plt.scatter(tempData.sampleNumber,tempData.Ux)
+	#		plt.scatter(tempData.sampleNumber.loc[tempData.Ux is not td.Ux],tempData.Ux.loc[tempData.Ux is not td.Ux])
+	#		plt.show()
+	#		plt.close()
 #
 ##	4.	apply averaging and append a final data series
-#				dataNew  = timeAverage(tempData)
-#				if not isinstance(data,pd.DataFrame):
-#					data = dataNew
-#				else:
-#
-#		print(data)
-#		data.to_pickle(writePath[j])
+				dataNew  = timeAverage(tempData)
+				if not isinstance(data,pd.DataFrame):
+					data = dataNew
+				else:
+					data=data.append(dataNew)
+		print(data)
+		data.to_pickle('temp.pkl')
+
+if testProfiles == True:
+	data = pd.read_pickle('temp.pkl')
+	plt.semilogx(data.z,data.UxMean,linestyle='-',marker='x')
+	plt.show()
+	plt.close()
+	plt.semilogx(data.z,data.uxRMS,linestyle='-',marker='x')
+	plt.show()
+	plt.close()
+	plt.semilogx(data.z,data.uyRMS,linestyle='-',marker='x')
+	plt.show()
+	plt.close()
+	plt.semilogx(data.z,data.uv,linestyle='-',marker='x')
+	plt.show()
+	plt.close()
 #
 #
 ##################################################################################################################################

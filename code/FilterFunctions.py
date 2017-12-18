@@ -57,11 +57,11 @@ def Filter(data,filterMethod,averageMethod,window,writePaths_figures,writePath_d
 #
 ##	Run the filter twice but no more than this.
 	N = 0
-	Nmax = 2
+	Nmax = 1
 	while N<Nmax:
 		N=N+1
-		XSpikes = Filter(UxNew,window,data,averageMethod,writePaths_figures,'Ux')
-		YSpikes = Filter(UyNew,window,data,averageMethod,writePaths_figures,'Uy')
+		XSpikes = Filter(UxNew,resT,window,data,averageMethod,writePaths_figures,'Ux')
+		YSpikes = Filter(UyNew,resT,window,data,averageMethod,writePaths_figures,'Uy')
 #
 		Spikes = XSpikes + YSpikes
 #
@@ -76,7 +76,7 @@ def Filter(data,filterMethod,averageMethod,window,writePaths_figures,writePath_d
 			t	= t[~Spikes]
 			resT	= resT[~Spikes]
 			s	= s[~Spikes]
-#			print('Number of spikes = '+str(len(Ux)-len(UxNew))+' = '+str((float(len(Ux))-float(len(UxNew)))/(float(len(Ux))/100))+'%')
+			print('Number of spikes = '+str(len(Ux)-len(UxNew))+' = '+str((float(len(Ux))-float(len(UxNew)))/(float(len(Ux))/100))+'%')
 #			
 ##	Add variables to existing data frame.
 ##	Variables first need to be converted to 'pandas.series'

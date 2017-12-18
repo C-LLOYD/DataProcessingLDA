@@ -6,6 +6,7 @@
 #
 ##	Initialise python
 import numpy as np
+import matplotlib.pyplot as plt
 #
 ########################################################################################################################
 ##
@@ -14,29 +15,39 @@ import numpy as np
 ##	Define the filtering function:
 ##	Input: velocity and the averaging window (multiple of 2)
 ##	Output: index of spikes after several loops.
-def movingAverageFilter(U,window,data,method,writePaths_figures,VariableName):
+def movingAverageFilter(U,resT,window,data,method,writePaths_figures,VariableName):
 #	Half the window for consistency
 	W = int(window/2)
 #
 ##	We loop through the length of U and take neighbouring points ....
 ##	For the first and last few points we can't do this! - Just use a slight weighting.
 ##	Define averaging window:
+	t = resT
 	Umeans = np.zeros(len(U))
 	Umeans[:] = np.NAN
 	std = np.zeros(len(U))
 	std[:] = np.NAN
 #
 ##	Assume that the windows at the extremes extend to the extremes ..
-	Umeans[0:W]=np.mean(U[0:2*W])
-	Umeans[-W:]=np.mean(U[-2*W:])
-	std[0:W]=np.std(U[0:2*W])
-	std[-W:]=np.std(U[-2*W:])
+	Umeans[0:W]	= np.divide(sum(U[0:2*W]*t[0:2*W]),sum(t[0:2*W]))
+	Umeans[-W:] = np.divide(sum(U[-2*W:]*t[-2*W:]),sum(t[-2*W:]))		
 	for i in range(W,len(U)-W+1):
-		Umeans[i] = np.mean(U[i-W:i+W])
-		std[i]  = np.std(U[i-W:i+W])
+		Umeans[i] = np.divide(sum(U[i-W:i+W]*t[i-W:i+W]),sum(t[i-W:i+W]))
+#
+	std[0:W]	= np.sqrt(np.divide(sum(((U[0:2*W] - Umeans[0:2*W])**2)*t[0:2*W]),sum(t[0:2*W])))
+	std[-W:]	= np.sqrt(np.divide(sum(((U[-2*W:] - Umeans[-2*W:])**2)*t[-2*W:]),sum(t[-2*W:])))
+#
+	for i in range(W,len(U)-W+1):
+		std[i]  = np.sqrt(np.divide(sum(((U[i-W:i+W] - Umeans[i-W:i+W])**2)*t[i-W:i+W]),sum(t[i-W:i+W])))
 #
 ##	Test : set up range such that if Umeans-2*std < U < Umeans+2*std we use Unew = U, Unew[test] = np.nan
 	spikes = (U<Umeans-4*std)+(U>Umeans+4*std)
+#	plt.plot(U,linestyle='',marker='.')
+#	plt.plot(Umeans)
+#	plt.plot(Umeans-2*std)
+#	plt.plot(Umeans+2*std)
+#	plt.show()
+#	plt.close()
 	return spikes
 
 ########################################################################################################################
