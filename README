@@ -1,0 +1,4 @@
+Details:
+	-	Only profile data is stored here - previous time Dep. and space Dep. data from Mar 2017, is stored in initialLDA file structure
+	-	Details on each profile are given in a README txt file in the corresponding directory - details include temperature variation and water quality
+	-	
