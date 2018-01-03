@@ -1,0 +1,13 @@
+Description:
+	LDA data collected for smooth plate at 4Hz pump frequency at x=400mm and for 2min sampling time (grid ~60 points).
+	Purpose is to provide good time-resolved profile for data  comparisons to rough surfaces
+
+	Temp change from 17.3 Deg to 17.4 Deg over 2 hours of sampling time
+
+	Water is 3 Days old so there are no bubbles on the plate (Plate left in flume for full 3 days, water level untouched for that period). 
+
+	Generally high sample rate of 300Hz consistently
+
+	Water level stayed at ~ 0.5cm above marker
+
+	Plate levelled to 0.4mm over 400mm length (0.057 Degrees)

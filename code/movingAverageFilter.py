@@ -28,17 +28,22 @@ def movingAverageFilter(U,resT,window,data,method,writePaths_figures,VariableNam
 	std = np.zeros(len(U))
 	std[:] = np.NAN
 #
-##	Assume that the windows at the extremes extend to the extremes ..
+##	Calculate means
 	Umeans[0:W]	= np.divide(sum(U[0:2*W]*t[0:2*W]),sum(t[0:2*W]))
 	Umeans[-W:] = np.divide(sum(U[-2*W:]*t[-2*W:]),sum(t[-2*W:]))		
 	for i in range(W,len(U)-W+1):
 		Umeans[i] = np.divide(sum(U[i-W:i+W]*t[i-W:i+W]),sum(t[i-W:i+W]))
 #
+##	Subtract means from series
 	std[0:W]	= np.sqrt(np.divide(sum(((U[0:2*W] - Umeans[0:2*W])**2)*t[0:2*W]),sum(t[0:2*W])))
 	std[-W:]	= np.sqrt(np.divide(sum(((U[-2*W:] - Umeans[-2*W:])**2)*t[-2*W:]),sum(t[-2*W:])))
 #
 	for i in range(W,len(U)-W+1):
 		std[i]  = np.sqrt(np.divide(sum(((U[i-W:i+W] - Umeans[i-W:i+W])**2)*t[i-W:i+W]),sum(t[i-W:i+W])))
+#
+##	
+
+
 #
 ##	Test : set up range such that if Umeans-2*std < U < Umeans+2*std we use Unew = U, Unew[test] = np.nan
 	spikes = (U<Umeans-4*std)+(U>Umeans+4*std)

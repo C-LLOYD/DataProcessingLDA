@@ -106,6 +106,8 @@ def txtToDataFrame (fileName):
 	resTime=[float(i) for i in resTime]
 	Ux=[float(i) for i in Ux]
 	Uy=[float(i) for i in Uy]
+
+#	print(timeStamp,np.insert(timeStamp,0,0))
 #
 ##	Change data to a dataFrame:
 ##	First change each list to a series, then combine the series.
@@ -119,6 +121,7 @@ def txtToDataFrame (fileName):
 	if len(s) > 100:
 		data = pd.DataFrame({'NXYZ':NXYZ,'sampleNumber':sampleNumber,
 				'timeStamp':timeStamp,'resTime':resTime,'Ux':Ux,'Uy':Uy})
+#		print(data)
 		return data;
 	else:
 		return np.nan
@@ -181,6 +184,14 @@ def timeAverage (dataRaw):
 	resT = dataRaw.resTime.as_matrix()
 	Ux = dataRaw.Ux.as_matrix()
 	Uy = dataRaw.Uy.as_matrix()
+	timeStamp = dataRaw.timeStamp.as_matrix()
+#
+	dt = timeStamp[1:]-timeStamp[:-1]
+	fMean = 1/(np.mean(dt))
+	fStd = 1/(np.std(dt))
+#	print(type(fMean))
+#	print(dt)
+#	print(fMean,fStd)
 #
 ##	CONDITION:	If there are too few sample points then statistics will be poor
 ##			Therefore, if len(sampleN) < 20 then ignore this file and produce 
@@ -192,9 +203,13 @@ def timeAverage (dataRaw):
 	UxMean,UyMean,uxRMS,uyRMS,uv = [],[],[],[],[]
 	UxMean = np.divide(sum(Ux*resT),sum(resT))
 	UyMean = np.divide(sum(Uy*resT),sum(resT))
+#	fMean = np.divide(sum(f*resT),sum(resT))
+#	fMean = np.mean(f)
 	uxRMS = np.sqrt(np.divide(sum(np.power((Ux-UxMean),2)*resT),sum(resT)))
 	uyRMS = np.sqrt(np.divide(sum(np.power((Uy-UyMean),2)*resT),sum(resT)))
 	uv = np.divide(sum((Ux-UxMean)*(Uy-UyMean)*resT),sum(resT))
+#	fStd = np.sqrt(np.divide(sum(np.power((f-fMean),2)*resT),sum(resT)))
+#	fStd = np.std(f)
 #	else:
 #		UxMean = np.nan
 #		UyMean = np.nan
@@ -206,11 +221,15 @@ def timeAverage (dataRaw):
 	z = pd.Series(float(dataRaw.NXYZ[3]))
 	UxMean = pd.Series(UxMean)
 	UyMean = pd.Series(UyMean)
+	fMean = pd.Series(fMean)
 	uxRMS = pd.Series(uxRMS)
 	uyRMS = pd.Series(uyRMS)
 	uv = pd.Series(uv)
+	fStd = pd.Series(fStd)
+#	print(fMean)
 #
-	data = pd.DataFrame({'z':z,'UxMean':UxMean, 'UyMean':UyMean, 'uxRMS':uxRMS, 'uyRMS':uyRMS, 'uv':uv})
+	data = pd.DataFrame({'z':z,'UxMean':UxMean, 'UyMean':UyMean, 'uxRMS':uxRMS, 'uyRMS':uyRMS, 'uv':uv,'fMean':fMean,'fStd':fStd})
+#	print(data)
 #
 ##	Now need to write the data
 	return data;

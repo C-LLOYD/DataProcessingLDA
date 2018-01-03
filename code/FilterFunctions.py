@@ -21,7 +21,7 @@ from scipy.special import erfinv
 ##	It calls the appropriate spike locator function, dependent on whether the user chooses
 ##	either moving average, global average, or ellipsoid method. If ellipsoid method is used, 
 ##	need to specify an additional averageMethod in order to choose either MAD or MEAN methods. 
-def Filter(data,filterMethod,averageMethod,window,writePaths_figures,writePath_dataFrames):
+def Filter(data,filterMethod,averageMethod,window,writePaths_figures):
 #
 ##	Decompose the important components of the dataframe:
 	Ux = data.Ux.as_matrix()
@@ -35,8 +35,7 @@ def Filter(data,filterMethod,averageMethod,window,writePaths_figures,writePath_d
 ##
 	UyNew = Uy
 	UxNew = Ux
-	Spikes = np.isnan(UxNew)	#Spikes are initialised based on the number of NANS in UxNew - there should be zero ... 
-	converged = False
+	Spikes = np.isnan(UxNew)	#Spikes are initialised based on the number of NANS in UxNew - there should be zero ...
 ##	Initialise filtered velocity fields
 ##
 ##	Define filtering method
@@ -52,18 +51,24 @@ def Filter(data,filterMethod,averageMethod,window,writePaths_figures,writePath_d
 		from globalAverageFilter import globalAverageFilter as Filter
 		fileAppend = 'filtered_global_average.pkl'
 #		print('Global Average Filter')
+	if filterMethod == 'movingAverageFilterReynoldsStresses':
+		from movingAverageFilterReynoldsStresses import movingAverageFilterReynoldsStresses as Filter
+		fileAppend = 'filtered_moving_average.pkl'
+#		print('Moving Average Filter ...')
 	else:
 		print('No valid filtering method given ...')
 #
 ##	Run the filter twice but no more than this.
 	N = 0
-	Nmax = 1
+	Nmax = 2
 	while N<Nmax:
 		N=N+1
-		XSpikes = Filter(UxNew,resT,window,data,averageMethod,writePaths_figures,'Ux')
-		YSpikes = Filter(UyNew,resT,window,data,averageMethod,writePaths_figures,'Uy')
-#
-		Spikes = XSpikes + YSpikes
+		if filterMethod == 'movingAverageFilterReynoldsStresses':
+			Spikes = Filter(UxNew,UyNew,resT,window)
+		else:
+			XSpikes = Filter(UxNew,resT,window,data,averageMethod,writePaths_figures,'Ux')
+			YSpikes = Filter(UyNew,resT,window,data,averageMethod,writePaths_figures,'Uy')
+			Spikes = XSpikes + YSpikes
 #
 		if len(UxNew) == len(UxNew[~Spikes]):#		test==len(UxNew[~Spikes]):
 			break
