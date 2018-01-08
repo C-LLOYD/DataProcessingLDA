@@ -21,7 +21,7 @@ from scipy.special import erfinv
 ##	It calls the appropriate spike locator function, dependent on whether the user chooses
 ##	either moving average, global average, or ellipsoid method. If ellipsoid method is used, 
 ##	need to specify an additional averageMethod in order to choose either MAD or MEAN methods. 
-def Filter(data,filterMethod,averageMethod,window,writePaths_figures):
+def Filter(data,filterMethod,averageMethod,window,writePaths_figures,Nloops,Nstds):
 #
 ##	Decompose the important components of the dataframe:
 	Ux = data.Ux.as_matrix()
@@ -60,11 +60,11 @@ def Filter(data,filterMethod,averageMethod,window,writePaths_figures):
 #
 ##	Run the filter twice but no more than this.
 	N = 0
-	Nmax = 2
+	Nmax = Nloops
 	while N<Nmax:
 		N=N+1
 		if filterMethod == 'movingAverageFilterReynoldsStresses':
-			Spikes = Filter(UxNew,UyNew,resT,window)
+			Spikes = Filter(UxNew,UyNew,resT,window,Nstds)
 		else:
 			XSpikes = Filter(UxNew,resT,window,data,averageMethod,writePaths_figures,'Ux')
 			YSpikes = Filter(UyNew,resT,window,data,averageMethod,writePaths_figures,'Uy')

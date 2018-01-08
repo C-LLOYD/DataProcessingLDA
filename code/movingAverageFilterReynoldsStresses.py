@@ -29,7 +29,7 @@ def movingWeightedAverage(win,phi,tau):
 		Phi[i] = np.divide(sum(phi[i-win:i+win]*tau[i-win:i+win]),sum(tau[i-win:i+win]))	
 	return Phi	
 
-def movingAverageFilterReynoldsStresses(u,v,resT,window):
+def movingAverageFilterReynoldsStresses(u,v,resT,window,Nstds):
 #	Half the window for consistency
 	W = int(window/2)
 	N = np.linspace(1,len(u),len(u))
@@ -44,7 +44,7 @@ def movingAverageFilterReynoldsStresses(u,v,resT,window):
 	varRuu = movingWeightedAverage(W,(ruu-Ruu)**2,resT)
 	varRvv = movingWeightedAverage(W,(rvv-Rvv)**2,resT)
 	varRuv = movingWeightedAverage(W,(ruv-Ruv)**2,resT)
-	tol = 4
+	tol = Nstds
 	spikes = (	  (u < U - tol*np.sqrt(Ruu)) + (u > U + tol*np.sqrt(Ruu)) +
 			  (v < V - tol*np.sqrt(Rvv)) + (v > V + tol*np.sqrt(Rvv)) +
 			  (ruu < Ruu - tol*np.sqrt(varRuu)) + (ruu > Ruu + tol*np.sqrt(varRuu)) +

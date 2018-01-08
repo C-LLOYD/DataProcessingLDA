@@ -3,4 +3,10 @@ Initialised on two workstations
 Details:
 	-	Only profile data is stored here - previous time Dep. and space Dep. data from Mar 2017, is stored in initialLDA file structure
 	-	Details on each profile are given in a README txt file in the corresponding directory - details include temperature variation and water quality
-	-	
+
+	-	Data filtering:
+				-	'raw' is the raw data series without ANY filtering
+				-	'min' is the raw data passed through (once) an MA filter of 200 points where poor data is identified as +/-4std from mean 
+				-	'low' is as above but passed through the filter twice
+				-	'med' is passed through MA once with poor data identified as +/-2std from mean
+				-	'high' is as above but passed through the filter twice
