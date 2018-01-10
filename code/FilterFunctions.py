@@ -40,21 +40,21 @@ def Filter(data,filterMethod,averageMethod,window,writePaths_figures,Nloops,Nstd
 ##
 ##	Define filtering method
 	if filterMethod == 'movingAverageFilter':
-		from movingAverageFilter import movingAverageFilter as Filter
+		print('Moving Average Filter ...')
+		from movingAverageFilter import movingAverageFilter as Fil
 		fileAppend = 'filtered_moving_average.pkl'
-#		print('Moving Average Filter ...')
 	elif filterMethod == 'phaseSpaceFilter':
-		from phaseSpaceFilter import phaseSpaceFilter as Filter
+		print('Phase Space Filter ...')
+		from phaseSpaceFilter import phaseSpaceFilter as Fil
 		fileAppend = 'filtered_phase_space.pkl'
-#		print('Phase Space Filter ...')
 	elif filterMethod == 'globalAverageFilter':
-		from globalAverageFilter import globalAverageFilter as Filter
+		print('Global Average Filter')
+		from globalAverageFilter import globalAverageFilter as Fil
 		fileAppend = 'filtered_global_average.pkl'
-#		print('Global Average Filter')
-	if filterMethod == 'movingAverageFilterReynoldsStresses':
-		from movingAverageFilterReynoldsStresses import movingAverageFilterReynoldsStresses as Filter
+	elif filterMethod == 'movingAverageFilterReynoldsStresses':
+		print('Moving Average Filter RSM...')
+		from movingAverageFilterReynoldsStresses import movingAverageFilterReynoldsStresses as Fil
 		fileAppend = 'filtered_moving_average.pkl'
-#		print('Moving Average Filter ...')
 	else:
 		print('No valid filtering method given ...')
 #
@@ -64,10 +64,10 @@ def Filter(data,filterMethod,averageMethod,window,writePaths_figures,Nloops,Nstd
 	while N<Nmax:
 		N=N+1
 		if filterMethod == 'movingAverageFilterReynoldsStresses':
-			Spikes = Filter(UxNew,UyNew,resT,window,Nstds)
+			Spikes = Fil(UxNew,UyNew,resT,window,Nstds)
 		else:
-			XSpikes = Filter(UxNew,resT,window,data,averageMethod,writePaths_figures,'Ux')
-			YSpikes = Filter(UyNew,resT,window,data,averageMethod,writePaths_figures,'Uy')
+			XSpikes = Fil(UxNew,resT,window,data,averageMethod,writePaths_figures,'Ux',Nstds)
+			YSpikes = Fil(UyNew,resT,window,data,averageMethod,writePaths_figures,'Uy',Nstds)
 			Spikes = XSpikes + YSpikes
 #
 		if len(UxNew) == len(UxNew[~Spikes]):#		test==len(UxNew[~Spikes]):

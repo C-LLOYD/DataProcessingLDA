@@ -22,15 +22,24 @@ from FilterFunctions import Filter
 ##	1.	Loop over data: Put this in at the end
 #
 ##	2.	import txt file: Give a hard coded name for now
-writeData = True
-saveFil = True
+writeData = False
+saveFil = False
+writeSpikeFrac = False
 #
-rawPathNames = 	[#"../data/rawData/smoothPlate/4Hz/x400/171211_4Hz_x400/*.txt",
+rawPathNames = 	["../data/rawData/smoothPlate/4Hz/x400/171211_4Hz_x400/*.txt",
 		"../data/rawData/smoothPlate/8Hz/x400/171214_8Hz_x400/*.txt"]
 
-filLoops = 	[0, 1, 2, 1, 2]
-NstdDev = 	[0, 4, 4, 2, 2]
-saveNames = ['raw','min','low','med','high']
+filterType = [	'movingAverageFilter',
+			'movingAverageFilter',
+#			'movingAverageFilterReynoldsStresses',
+#			'movingAverageFilterReynoldsStresses',
+#			'movingAverageFilterReynoldsStresses',
+#			'movingAverageFilterReynoldsStresses',
+#			'movingAverageFilterReynoldsStresses'
+		]
+filLoops = 	[1,1]# 0, 1, 2, 1, 2]
+NstdDev = 	[4,2]# 0, 4, 4, 2, 2]
+saveNames = ['basicMin','basicMed']#'raw','min','low','med','high']
 #
 if writeData == True:
 	for j in range(len(rawPathNames)):
@@ -51,8 +60,8 @@ if writeData == True:
 					filSaveName = str('/'.join(tempSavePath)+filSaveNameEnd)
 #					print(rawSaveName)
 				if isinstance(td,pd.DataFrame):
-					tempData = Filter(td,'movingAverageFilterReynoldsStresses','mean',200,'none',filLoops[i],NstdDev[i])
-#					tempData = td
+					tempData = Filter(td,filterType[i],'mean',200,'none',filLoops[i],NstdDev[i])
+#					print(filSaveName)
 					tempData.to_pickle(filSaveName)
 #	
 ##	4.	apply averaging and append a final data series
@@ -67,7 +76,39 @@ if writeData == True:
 			tempSavePath[-1] = str(tempSavePath[-1].split('.')[0] + '_averaged_' + saveNames[i] + '.pkl')
 			tempSavePath[tempSavePath.index('rawData')] = 'processedData'
 			globSaveName = '/'.join(tempSavePath)				
+			print(globSaveName)
 			data.to_pickle(globSaveName)
+#
+#
+##################################################################################################################################
+masterPath = [	"../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/",
+			"../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/"	]
+
+filterType = [	'basicMin','basicMed']#'min','low','med','high'	]
+
+avDataFileName = [	'4Hz_x400_averaged','8Hz_x400_averaged'	]
+
+if writeSpikeFrac == True:
+	for i in range(len(masterPath)):
+		rawSeriesNames = glob.glob(str(masterPath[i] + 'timeSeries/raw/*'))
+		for j in range(len(filterType)):
+			AvData = pd.read_pickle(str(masterPath[i] + avDataFileName[i] + '_' + filterType[j] + '.pkl'))
+			AvData["spikeFrac"] = ""
+			AvData = AvData.sort_values(by="fileName",ascending=1)
+			AvData = AvData.set_index("fileName")
+			AvDataFileStruc = AvData.index[0].split('.')
+			filterSeriesNames = rawSeriesNames[:]
+			for k in range(len(filterSeriesNames)):
+				filterSeriesNames[k] = rawSeriesNames[k].replace('raw',filterType[j])
+				rawTimeSeries = pd.read_pickle(rawSeriesNames[k])
+				filterTimeSeries = pd.read_pickle(filterSeriesNames[k])
+				spikeFracEntry = 1-float(len(filterTimeSeries.Ux))/float(len(rawTimeSeries.Ux))
+				AvLoc = AvDataFileStruc[:]
+				AvLoc[1] = filterSeriesNames[k].split('/')[-1].split('.')[1]
+				AvData.set_value(	'.'.join(AvLoc),	"spikeFrac",	spikeFracEntry)
+			AvData = AvData.reset_index()
+			print(AvData)
+			AvData.to_pickle(str(masterPath[i] + avDataFileName[i] + '_' + filterType[j] + '.pkl'))
 #
 #
 ##################################################################################################################################

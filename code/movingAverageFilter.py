@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 ##	Define the filtering function:
 ##	Input: velocity and the averaging window (multiple of 2)
 ##	Output: index of spikes after several loops.
-def movingAverageFilter(U,resT,window,data,method,writePaths_figures,VariableName):
+def movingAverageFilter(U,resT,window,data,method,writePaths_figures,VariableName,Nstds):
 #	Half the window for consistency
 	W = int(window/2)
 #
@@ -46,7 +46,7 @@ def movingAverageFilter(U,resT,window,data,method,writePaths_figures,VariableNam
 
 #
 ##	Test : set up range such that if Umeans-2*std < U < Umeans+2*std we use Unew = U, Unew[test] = np.nan
-	spikes = (U<Umeans-4*std)+(U>Umeans+4*std)
+	spikes = (U<Umeans-Nstds*std)+(U>Umeans+Nstds*std)
 #	plt.plot(U,linestyle='',marker='.')
 #	plt.plot(Umeans)
 #	plt.plot(Umeans-2*std)
