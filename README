@@ -10,3 +10,4 @@ Details:
 				-	'low' is as above but passed through the filter twice
 				-	'med' is passed through MA once with poor data identified as +/-2std from mean
 				-	'high' is as above but passed through the filter twice
+				-	All data filtered using MA window of 200, unless specified

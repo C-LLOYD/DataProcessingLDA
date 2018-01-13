@@ -23,7 +23,11 @@ fileName4Hz = ['../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x
 		'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_min.pkl',
 		'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_low.pkl',
 		'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_med.pkl',
-		'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_high.pkl']
+		'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_high.pkl',
+		'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_w50_MA_min.pkl',
+		'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_w50_MA_low.pkl',
+		'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_w50_MA_med.pkl',
+		'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_w50_MA_high.pkl']
 
 fileName8Hz = ['../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_raw.pkl',
 		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_basicMin.pkl',
@@ -31,7 +35,11 @@ fileName8Hz = ['../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x
 		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_min.pkl',
 		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_low.pkl',
 		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_med.pkl',
-		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_high.pkl']
+		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_high.pkl',
+		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_w50_MA_min.pkl',
+		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_w50_MA_low.pkl',
+		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_w50_MA_med.pkl',
+		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_w50_MA_high.pkl']
 
 nameEnd = ['4Hz','8Hz']
 
@@ -75,7 +83,11 @@ if findMeanSpikeFrac == True:
 				pd.read_pickle(fileName[3]),
 				pd.read_pickle(fileName[4]),
 				pd.read_pickle(fileName[5]),
-				pd.read_pickle(fileName[6])
+				pd.read_pickle(fileName[6]),
+				pd.read_pickle(fileName[7]),
+				pd.read_pickle(fileName[8]),
+				pd.read_pickle(fileName[9]),
+				pd.read_pickle(fileName[10])
 			  ]
 		meanSpikeFrac = []
 		for i in range(len(data)):
@@ -95,11 +107,15 @@ if testProfiles == True:
 				pd.read_pickle(fileName[3]),
 				pd.read_pickle(fileName[4]),
 				pd.read_pickle(fileName[5]),
-				pd.read_pickle(fileName[6])
+				pd.read_pickle(fileName[6]),
+				pd.read_pickle(fileName[7]),
+				pd.read_pickle(fileName[8]),
+				pd.read_pickle(fileName[9]),
+				pd.read_pickle(fileName[10])
 			  ]
 #
-		markers = ['x','o','v','s','*','+','^']
-		labels =  ['raw','MA, min', 'MA, med', 'MARS, min', 'MARS, low', 'MARS, med', 'MARS, high']
+		markers = ['x','o','v','s','*','+','^','.','<','>','p']
+		labels =  ['raw','MA, min', 'MA, med', 'MARS, min', 'MARS, low', 'MARS, med', 'MARS, high', 'MA W50, min', 'MA W50, low', 'MA W50, med', 'MA W50, high']
 #
 ##	1.	test effect of filtering method
 ##			-	raw
@@ -138,6 +154,24 @@ if testProfiles == True:
 					[labels[0],labels[3],labels[4],labels[5],labels[6]], [markers[0],markers[3],markers[4],markers[5],markers[6]],
 					r'$y$ (mm)', ylabels[i],writeNames[i])
 			legend = False
+##	1.	test effect of filtering window
+##			-	raw
+##			-	MA_w50,	 minimal filtering
+##			-	MA_w50,	 low filtering
+##			-	MA_w50,	 medium filtering
+##			-	MA_w50,	 high filtering
+		writeNames = [	str('../data/processedData/figures/filterDependence/' + nameEnd[j] + 'filterWindow_Uprofile.png'),
+					str('../data/processedData/figures/filterDependence/' + nameEnd[j] + 'filterWindow_uRMSprofile.png'),
+					str('../data/processedData/figures/filterDependence/' + nameEnd[j] + 'filterWindow_vRMSprofile.png'),
+					str('../data/processedData/figures/filterDependence/' + nameEnd[j] + 'filterWindow_uvProfile.png')
+				]
+		print(writeNames)
+		legend = True
+		for i in range(len(var)):
+			plotter(	[data[0]["z"],data[7]["z"],data[8]["z"],data[9]["z"],data[10]["z"]], [data[0][var[i]],data[7][var[i]],data[8][var[i]],data[9][var[i]],data[10][var[i]]],
+					[labels[0],labels[7],labels[8],labels[9],labels[10]], [markers[0],markers[7],markers[8],markers[9],markers[10]],
+					r'$y$ (mm)', ylabels[i],writeNames[i])
+#			legend = False
 
 
 #

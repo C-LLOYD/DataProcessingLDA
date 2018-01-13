@@ -31,15 +31,18 @@ rawPathNames = 	["../data/rawData/smoothPlate/4Hz/x400/171211_4Hz_x400/*.txt",
 
 filterType = [	'movingAverageFilter',
 			'movingAverageFilter',
+			'movingAverageFilter',
+			'movingAverageFilter',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses'
 		]
-filLoops = 	[1,1]# 0, 1, 2, 1, 2]
-NstdDev = 	[4,2]# 0, 4, 4, 2, 2]
-saveNames = ['basicMin','basicMed']#'raw','min','low','med','high']
+filLoops = 	[1,2,1,2]# 0, 1, 2, 1, 2]
+NstdDev = 	[4,4,2,2]# 0, 4, 4, 2, 2]
+avWindow = [50, 50, 50, 50]
+saveNames = ['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#['basicMin','basicMed']#'raw','min','low','med','high']
 #
 if writeData == True:
 	for j in range(len(rawPathNames)):
@@ -60,7 +63,7 @@ if writeData == True:
 					filSaveName = str('/'.join(tempSavePath)+filSaveNameEnd)
 #					print(rawSaveName)
 				if isinstance(td,pd.DataFrame):
-					tempData = Filter(td,filterType[i],'mean',200,'none',filLoops[i],NstdDev[i])
+					tempData = Filter(td,filterType[i],'mean',avWindow[i],'none',filLoops[i],NstdDev[i])
 #					print(filSaveName)
 					tempData.to_pickle(filSaveName)
 #	
@@ -84,7 +87,7 @@ if writeData == True:
 masterPath = [	"../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/",
 			"../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/"	]
 
-filterType = [	'basicMin','basicMed']#'min','low','med','high'	]
+filterType = ['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#[	'basicMin','basicMed']#'min','low','med','high'	]
 
 avDataFileName = [	'4Hz_x400_averaged','8Hz_x400_averaged'	]
 
