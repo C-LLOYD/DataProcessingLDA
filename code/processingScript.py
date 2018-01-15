@@ -22,27 +22,27 @@ from FilterFunctions import Filter
 ##	1.	Loop over data: Put this in at the end
 #
 ##	2.	import txt file: Give a hard coded name for now
-writeData = False
-saveFil = False
+writeData = True
+saveFil = True
 writeSpikeFrac = False
 #
-rawPathNames = 	["../data/rawData/smoothPlate/4Hz/x400/171211_4Hz_x400/*.txt",
-		"../data/rawData/smoothPlate/8Hz/x400/171214_8Hz_x400/*.txt"]
-
+rawPathNames = 	["../data/rawData/smoothPlate/4Hz/x400/1703XX_4Hz_x400/*.txt",
+#		"../data/rawData/smoothPlate/8Hz/x400/171214_8Hz_x400/*.txt"
+		]
 filterType = [	'movingAverageFilter',
-			'movingAverageFilter',
-			'movingAverageFilter',
-			'movingAverageFilter',
+#			'movingAverageFilter',
+#			'movingAverageFilter',
+#			'movingAverageFilter',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses'
 		]
-filLoops = 	[1,2,1,2]# 0, 1, 2, 1, 2]
-NstdDev = 	[4,4,2,2]# 0, 4, 4, 2, 2]
+filLoops = 	[0]#[1,2,1,2]# 0, 1, 2, 1, 2]
+NstdDev = 	[0]#[4,4,2,2]# 0, 4, 4, 2, 2]
 avWindow = [50, 50, 50, 50]
-saveNames = ['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#['basicMin','basicMed']#'raw','min','low','med','high']
+saveNames = ['raw']#['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#['basicMin','basicMed']#'raw','min','low','med','high']
 #
 if writeData == True:
 	for j in range(len(rawPathNames)):
