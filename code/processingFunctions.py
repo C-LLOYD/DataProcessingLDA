@@ -77,6 +77,11 @@ def txtToDataFrame (fileName):
 	for i in range(len(content)):
 		if re.match(r'"Row#"',content[i].split('\t')[0]):
 			index=i+1
+			sampleNumberTest = True
+			break
+		if re.match(r'"AT',content[i].split('\t')[0]):
+			index=i+1
+			sampleNumberTest = False
 			break
 ##	Now loop through the length of content and extract variables:
 ##	sample number, time stamp, residence time, and two components of velocity
@@ -90,11 +95,21 @@ def txtToDataFrame (fileName):
 #
 	sampleNumber,timeStamp,resTime,Ux,Uy = [],[],[],[],[]
 	for i in range(index,len(content)):
-		sampleNumber.append(content[i].split('\t')[0])
-		timeStamp.append(content[i].split('\t')[1])
-		resTime.append(content[i].split('\t')[2])
-		Ux.append(content[i].split('\t')[3])
-		Uy.append(content[i].split('\t')[4])
+		if sampleNumberTest == False:
+			if len(sampleNumber) == 0:
+				sampleNumber = [1]
+			else:
+				sampleNumber.append((sampleNumber[-1]+1))
+			timeStamp.append(content[i].split('\t')[0])
+			resTime.append(content[i].split('\t')[1])
+			Ux.append(content[i].split('\t')[2])
+			Uy.append(content[i].split('\t')[3])
+		else:
+			sampleNumber.append(content[i].split('\t')[0])
+			timeStamp.append(content[i].split('\t')[1])
+			resTime.append(content[i].split('\t')[2])
+			Ux.append(content[i].split('\t')[3])
+			Uy.append(content[i].split('\t')[4])
 #
 #	Store variables as lists of floats
 	sampleNumber=[float(i) for i in sampleNumber]

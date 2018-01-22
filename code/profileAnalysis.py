@@ -13,8 +13,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 #
 ###########################################################################################
-testProfiles = True
-findMeanSpikeFrac = True
+testProfiles = False
+findMeanSpikeFrac = False#True
+testTimeSeries = True
 #
 ##	import data
 fileName4Hz = ['../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_raw.pkl',
@@ -29,6 +30,14 @@ fileName4Hz = ['../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x
 		'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_w50_MA_med.pkl',
 		'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_w50_MA_high.pkl']
 
+fileName4HzTStests = [	'../data/processedData/smoothPlate/4Hz/x400/1703XX_4Hz_x400/4Hz_x400_averaged_raw.pkl',
+				'../data/processedData/smoothPlate/4Hz/x400/1703XX_4Hz_x400/4Hz_x400_averaged_high.pkl',
+				'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_raw.pkl',
+				'../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_high.pkl']
+
+TSlabels =  ['Mar, raw','Mar, fil','Dec, raw','Dec, fil']
+
+
 fileName8Hz = ['../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_raw.pkl',
 		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_basicMin.pkl',
 		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_basicMed.pkl',
@@ -40,6 +49,9 @@ fileName8Hz = ['../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x
 		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_w50_MA_low.pkl',
 		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_w50_MA_med.pkl',
 		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_w50_MA_high.pkl']
+
+markers = ['x','o','v','s','*','+','^','.','<','>','p']
+labels =  ['raw','MA, min', 'MA, med', 'MARS, min', 'MARS, low', 'MARS, med', 'MARS, high', 'MA W50, min', 'MA W50, low', 'MA W50, med', 'MA W50, high']
 
 nameEnd = ['4Hz','8Hz']
 
@@ -114,8 +126,6 @@ if testProfiles == True:
 				pd.read_pickle(fileName[10])
 			  ]
 #
-		markers = ['x','o','v','s','*','+','^','.','<','>','p']
-		labels =  ['raw','MA, min', 'MA, med', 'MARS, min', 'MARS, low', 'MARS, med', 'MARS, high', 'MA W50, min', 'MA W50, low', 'MA W50, med', 'MA W50, high']
 #
 ##	1.	test effect of filtering method
 ##			-	raw
@@ -172,6 +182,43 @@ if testProfiles == True:
 					[labels[0],labels[7],labels[8],labels[9],labels[10]], [markers[0],markers[7],markers[8],markers[9],markers[10]],
 					r'$y$ (mm)', ylabels[i],writeNames[i])
 #			legend = False
+#
+###########################################################################################################
+if testTimeSeries == True:
+	fileName = fileName4HzTStests
+	data = [	pd.read_pickle(fileName[0]),
+			pd.read_pickle(fileName[1]),
+			pd.read_pickle(fileName[2]),
+			pd.read_pickle(fileName[3])]
+
+	var = ["UxMean","uxRMS","uyRMS","uv"]
+	ylabels = [r'$\mu_u$ (m/s)',r'$\sigma_u$ (m/s)',r'$\sigma_v$ (m/s)',r'$\gamma_{uv}$, (m\textsuperscript{2}/s\textsuperscript{2})']
+	writeNames = [	str('../data/processedData/figures/filterDependence/' + '4Hz' + 'timeSeries_Uprofile.png'),
+				str('../data/processedData/figures/filterDependence/' + '4Hz' + 'timeSeries_uRMSprofile.png'),
+				str('../data/processedData/figures/filterDependence/' + '4Hz' + 'timeSeries_vRMSprofile.png'),
+				str('../data/processedData/figures/filterDependence/' + '4Hz' + 'timeSeries_uvProfile.png')
+			]
+	legend = True
+	for i in range(len(var)):
+		plotter(	[data[0]["z"],data[1]["z"],data[2]["z"],data[3]["z"]], [data[0][var[i]],data[1][var[i]],data[2][var[i]],data[3][var[i]]],
+				[TSlabels[0],TSlabels[1],TSlabels[2],TSlabels[3]], [markers[0],markers[1],markers[2],markers[3]],
+				r'$y$ (mm)', ylabels[i],writeNames[i])
+#		legend = False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #

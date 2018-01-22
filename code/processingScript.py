@@ -22,14 +22,15 @@ from FilterFunctions import Filter
 ##	1.	Loop over data: Put this in at the end
 #
 ##	2.	import txt file: Give a hard coded name for now
-writeData = True
-saveFil = True
-writeSpikeFrac = False
+writeData = False
+saveFil = False
+writeSpikeFrac = True
 #
-rawPathNames = 	["../data/rawData/smoothPlate/4Hz/x400/1703XX_4Hz_x400/*.txt",
+rawPathNames = 	["../data/rawData/smoothPlate/4Hz/x400/1703XX_4Hz_x400/*.txt"
+#"../data/rawData/smoothPlate/16Hz/x400/170816_16Hz_x400/*.txt",
 #		"../data/rawData/smoothPlate/8Hz/x400/171214_8Hz_x400/*.txt"
 		]
-filterType = [	'movingAverageFilter',
+filterType = [	#'movingAverageFilter',
 #			'movingAverageFilter',
 #			'movingAverageFilter',
 #			'movingAverageFilter',
@@ -37,12 +38,12 @@ filterType = [	'movingAverageFilter',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
-#			'movingAverageFilterReynoldsStresses'
+			'movingAverageFilterReynoldsStresses'
 		]
-filLoops = 	[0]#[1,2,1,2]# 0, 1, 2, 1, 2]
-NstdDev = 	[0]#[4,4,2,2]# 0, 4, 4, 2, 2]
-avWindow = [50, 50, 50, 50]
-saveNames = ['raw']#['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#['basicMin','basicMed']#'raw','min','low','med','high']
+filLoops = 	[2]#[1,2,1,2]# 0, 1, 2, 1, 2]
+NstdDev = 	[2]#[4,4,2,2]# 0, 4, 4, 2, 2]
+avWindow = [200]#[50, 50, 50, 50]
+saveNames = ['high']#['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#['basicMin','basicMed']#'raw','min','low','med','high']
 #
 if writeData == True:
 	for j in range(len(rawPathNames)):
@@ -84,12 +85,12 @@ if writeData == True:
 #
 #
 ##################################################################################################################################
-masterPath = [	"../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/",
-			"../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/"	]
+masterPath = [	"../data/processedData/smoothPlate/4Hz/x400/1703XX_4Hz_x400/",
+		#	"../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/"	]
+		]
+filterType = ['high']#['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#[	'basicMin','basicMed']#'min','low','med','high'	]
 
-filterType = ['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#[	'basicMin','basicMed']#'min','low','med','high'	]
-
-avDataFileName = [	'4Hz_x400_averaged','8Hz_x400_averaged'	]
+avDataFileName = [	'4Hz_x400_averaged']#,'8Hz_x400_averaged'	]
 
 if writeSpikeFrac == True:
 	for i in range(len(masterPath)):
