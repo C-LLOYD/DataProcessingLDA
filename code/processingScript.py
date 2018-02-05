@@ -22,28 +22,34 @@ from FilterFunctions import Filter
 ##	1.	Loop over data: Put this in at the end
 #
 ##	2.	import txt file: Give a hard coded name for now
-writeData = False
-saveFil = False
-writeSpikeFrac = True
+writeData = True
+saveFil = True
+writeSpikeFrac = False
 #
-rawPathNames = 	["../data/rawData/smoothPlate/4Hz/x400/1703XX_4Hz_x400/*.txt"
+rawPathNames = 	[
+				'../data/rawData/dataQualityTests/8Hz/angle0/noSeeding/*.txt',
+				'../data/rawData/dataQualityTests/8Hz/angle0/seeding/*.txt',
+				'../data/rawData/dataQualityTests/8Hz/angle2p7/noSeeding/*.txt',
+				'../data/rawData/dataQualityTests/8Hz/angle2p7/seeding/*.txt',
+#
+#"../data/rawData/smoothPlate/4Hz/x400/1703XX_4Hz_x400/*.txt"
 #"../data/rawData/smoothPlate/16Hz/x400/170816_16Hz_x400/*.txt",
 #		"../data/rawData/smoothPlate/8Hz/x400/171214_8Hz_x400/*.txt"
 		]
 filterType = [	#'movingAverageFilter',
 #			'movingAverageFilter',
-#			'movingAverageFilter',
-#			'movingAverageFilter',
+			'movingAverageFilter',
+			'movingAverageFilter',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
-			'movingAverageFilterReynoldsStresses'
+#			'movingAverageFilterReynoldsStresses'
 		]
-filLoops = 	[2]#[1,2,1,2]# 0, 1, 2, 1, 2]
-NstdDev = 	[2]#[4,4,2,2]# 0, 4, 4, 2, 2]
-avWindow = [200]#[50, 50, 50, 50]
-saveNames = ['high']#['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#['basicMin','basicMed']#'raw','min','low','med','high']
+filLoops = 	[0,2]#[1,2,1,2]# 0, 1, 2, 1, 2]
+NstdDev = 	[0,2]#[4,4,2,2]# 0, 4, 4, 2, 2]
+avWindow = [50,50]#[50, 50, 50, 50]
+saveNames = ['raw','w50_MA_high']#['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#['basicMin','basicMed']#'raw','min','low','med','high']
 #
 if writeData == True:
 	for j in range(len(rawPathNames)):
