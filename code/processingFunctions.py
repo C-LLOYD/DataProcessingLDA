@@ -141,6 +141,19 @@ def txtToDataFrame (fileName):
 	else:
 		return np.nan
 ###########################################################################################
+#
+##		transform function to account for probe rotation of 45 deg
+def transform(df):
+	tUx = df['Ux'].as_matrix()
+	tUy = df['Uy'].as_matrix()
+	Ux = np.divide(1,np.sqrt(2))*(tUx-tUy)
+	Uy = np.divide(1,np.sqrt(2))*(tUx+tUy)
+	df['Ux'] = pd.Series(Ux)
+	df['Uy'] = pd.Series(Uy)
+	return df
+
+
+###########################################################################################
 def txtToGridFrame (fileName):
 #	Open the input file and store the line data as 'content'
 	with open(fileName) as f:

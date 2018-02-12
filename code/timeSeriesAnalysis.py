@@ -52,27 +52,19 @@ def timeSeriesPlotter(df,saveName):
 
 
 timeSeries = [
-			'.000001.pkl',
-			'.000002.pkl',
-			'.000003.pkl',
+##			'.000001.pkl',
+##			'.000002.pkl',
+			'.000010.pkl',
 		]		
 
 fileNamePre = [
-			'../data/processedData/dataQualityTests/8Hz/rotation0/angle0/timeSeries/raw/raw_8hz_rotation0_nodip',
-			'../data/processedData/dataQualityTests/8Hz/rotation0/angle2p7/timeSeries/raw/raw_8hz_rotation0_dip',
-			'../data/processedData/dataQualityTests/8Hz/rotation90/angle0/timeSeries/raw/raw_8hz_rotation90_nodip',
-			'../data/processedData/dataQualityTests/8Hz/rotation90/angle2p7/timeSeries/raw/raw_8hz_rotation90_dip',
-			'../data/processedData/dataQualityTests/8Hz/rotation45/angle0/timeSeries/raw/raw_8hz_rotation45_nodip',
-			'../data/processedData/dataQualityTests/8Hz/rotation45/angle2p7/timeSeries/raw/raw_8hz_rotation45_dip',
+			'../data/processedData/dataQualityTests/8Hz/profiles/rotation0/timeSeries/raw/raw_8hz_boundary_layer_rotation0',
+			'../data/processedData/dataQualityTests/8Hz/profiles/rotation45/timeSeries/raw/raw_8hz_boundary_layer_rotation45',
 		]
 
 saveNames = [
-			'../data/processedData/figures/dataQualityTests/rotation0_nodip.png',
-			'../data/processedData/figures/dataQualityTests/rotation0_dip.png',
-			'../data/processedData/figures/dataQualityTests/rotation45_nodip.png',
-			'../data/processedData/figures/dataQualityTests/rotation45_dip.png',
-			'../data/processedData/figures/dataQualityTests/rotation90_nodip.png',
-			'../data/processedData/figures/dataQualityTests/rotation90_dip.png',
+			'../data/processedData/figures/dataQualityTests/rotation0_profile.png',
+			'../data/processedData/figures/dataQualityTests/rotation45_profile.png',
 		]
 
 for f in range(len(fileNamePre)):

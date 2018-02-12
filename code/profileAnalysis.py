@@ -15,7 +15,8 @@ import matplotlib.pyplot as plt
 ###########################################################################################
 testProfiles = False
 findMeanSpikeFrac = False#True
-testTimeSeries = True
+testTimeSeries = False
+testRotationProfiles = True
 #
 ##	import data
 fileName4Hz = ['../data/processedData/smoothPlate/4Hz/x400/171211_4Hz_x400/4Hz_x400_averaged_raw.pkl',
@@ -50,6 +51,15 @@ fileName8Hz = ['../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x
 		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_w50_MA_med.pkl',
 		'../data/processedData/smoothPlate/8Hz/x400/171214_8Hz_x400/8Hz_x400_averaged_w50_MA_high.pkl']
 
+fileNameRotationTests = [
+		'../data/processedData/dataQualityTests/8Hz/profiles/rotation45/8hz_boundary_layer_rotation45_averaged_w50_MA_high.pkl',
+		'../data/processedData/dataQualityTests/8Hz/profiles/rotation0/8hz_boundary_layer_rotation0_averaged_w50_MA_high.pkl',
+		'../data/processedData/dataQualityTests/8Hz/profiles/rotation45/8hz_boundary_layer_rotation45_averaged_raw.pkl',
+		'../data/processedData/dataQualityTests/8Hz/profiles/rotation0/8hz_boundary_layer_rotation0_averaged_raw.pkl'	,	
+				]
+
+rotationTestLabels = ['45 deg, fil','fil','45 deg, raw','raw']
+
 markers = ['x','o','v','s','*','+','^','.','<','>','p']
 labels =  ['raw','MA, min', 'MA, med', 'MARS, min', 'MARS, low', 'MARS, med', 'MARS, high', 'MA W50, min', 'MA W50, low', 'MA W50, med', 'MA W50, high']
 
@@ -83,6 +93,37 @@ def plotter(X,Y,dataLabels,markers,xLabel,yLabel,writeName):
 	plt.close()
 #
 ###########################################################################################################
+if testRotationProfiles == True:
+#
+	data = [	pd.read_pickle(fileNameRotationTests[0]),
+			pd.read_pickle(fileNameRotationTests[1]),
+			pd.read_pickle(fileNameRotationTests[2]),
+			pd.read_pickle(fileNameRotationTests[3]),
+			  ]
+#
+#
+##	1.	test effect of filtering method
+##			-	raw
+##			-	basic, minimal filtering
+##			-	RSM,	 minimal filtering
+##			-	basic, medium filtering
+##			-	RSM,	 medium filtering
+	var = ["UxMean","uxRMS","uyRMS","uv"]
+	ylabels = [r'$\mu_u$ (m/s)',r'$\sigma_u$ (m/s)',r'$\sigma_v$ (m/s)',r'$\gamma_{uv}$, (m\textsuperscript{2}/s\textsuperscript{2})']
+	writeNames = [	str('../data/processedData/figures/dataQualityTests/rotationTest_Uprofile.png'),
+					str('../data/processedData/figures/dataQualityTests/rotationTest_uRMSprofile.png'),
+					str('../data/processedData/figures/dataQualityTests/rotationTest_vRMSprofile.png'),
+					str('../data/processedData/figures/dataQualityTests/rotationTest_uvProfile.png')
+				]
+	legend = True
+	for i in range(len(var)):
+		plotter(	[data[0]["z"],data[1]["z"],data[2]["z"],data[3]["z"]], [data[0][var[i]],data[1][var[i]],data[2][var[i]],data[3][var[i]]],
+				[rotationTestLabels[0],rotationTestLabels[1],rotationTestLabels[2],rotationTestLabels[3]], [markers[0],markers[1],markers[2],markers[3]],
+				r'$y$ (mm)', ylabels[i],writeNames[i])
+		legend = False
+
+
+
 
 if findMeanSpikeFrac == True:
 	for j in range(len(nameEnd)):
