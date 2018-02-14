@@ -58,7 +58,17 @@ fileNameRotationTests = [
 		'../data/processedData/dataQualityTests/8Hz/profiles/rotation0/8hz_boundary_layer_rotation0_averaged_raw.pkl'	,	
 				]
 
+fileNameRotationAngleTolTests = [
+		'../data/processedData/dataQualityTests/8Hz/profiles/rotation45/8hz_boundary_layer_rotation45_averaged_raw44.pkl',
+		'../data/processedData/dataQualityTests/8Hz/profiles/rotation45/8hz_boundary_layer_rotation45_averaged_raw44p9.pkl',
+		'../data/processedData/dataQualityTests/8Hz/profiles/rotation45/8hz_boundary_layer_rotation45_averaged_raw.pkl',
+		'../data/processedData/dataQualityTests/8Hz/profiles/rotation45/8hz_boundary_layer_rotation45_averaged_raw45p1.pkl',
+		'../data/processedData/dataQualityTests/8Hz/profiles/rotation45/8hz_boundary_layer_rotation45_averaged_raw46.pkl',	
+				]
+
 rotationTestLabels = ['45 deg, fil','fil','45 deg, raw','raw']
+
+rotationAgnelTolTestLabels = ['44','44.9','45','45.1','46']
 
 markers = ['x','o','v','s','*','+','^','.','<','>','p']
 labels =  ['raw','MA, min', 'MA, med', 'MARS, min', 'MARS, low', 'MARS, med', 'MARS, high', 'MA W50, min', 'MA W50, low', 'MA W50, med', 'MA W50, high']
@@ -122,6 +132,37 @@ if testRotationProfiles == True:
 				r'$y$ (mm)', ylabels[i],writeNames[i])
 		legend = False
 
+###########################################################################################################
+if testRotationProfiles == True:
+#
+	data = [	pd.read_pickle(fileNameRotationAngleTolTests[0]),
+			pd.read_pickle(fileNameRotationAngleTolTests[1]),
+			pd.read_pickle(fileNameRotationAngleTolTests[2]),
+			pd.read_pickle(fileNameRotationAngleTolTests[3]),
+			pd.read_pickle(fileNameRotationAngleTolTests[4]),
+			  ]
+#
+#
+##	1.	test effect of filtering method
+##			-	raw
+##			-	basic, minimal filtering
+##			-	RSM,	 minimal filtering
+##			-	basic, medium filtering
+##			-	RSM,	 medium filtering
+	var = ["UxMean","uxRMS","uyRMS","uv"]
+	ylabels = [r'$\mu_u$ (m/s)',r'$\sigma_u$ (m/s)',r'$\sigma_v$ (m/s)',r'$\gamma_{uv}$, (m\textsuperscript{2}/s\textsuperscript{2})']
+	writeNames = [	str('../data/processedData/figures/dataQualityTests/rotationAngleTest_Uprofile.png'),
+					str('../data/processedData/figures/dataQualityTests/rotationAngleTest_uRMSprofile.png'),
+					str('../data/processedData/figures/dataQualityTests/rotationAngleTest_vRMSprofile.png'),
+					str('../data/processedData/figures/dataQualityTests/rotationAngleTest_uvProfile.png')
+				]
+	legend = True
+	for i in range(len(var)):
+		plotter(	[data[0]["z"],data[1]["z"],data[2]["z"],data[3]["z"],data[4]["z"]], [data[0][var[i]],data[1][var[i]],data[2][var[i]],data[3][var[i]],data[4][var[i]]],
+				[rotationAgnelTolTestLabels[0],rotationAgnelTolTestLabels[1],rotationAgnelTolTestLabels[2],rotationAgnelTolTestLabels[3],rotationAgnelTolTestLabels[4]],
+				 [markers[0],markers[1],markers[2],markers[3],markers[4]],
+				r'$y$ (mm)', ylabels[i],writeNames[i])
+		legend = False
 
 
 

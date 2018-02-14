@@ -24,11 +24,10 @@ from FilterFunctions import Filter
 #
 ##	2.	import txt file: Give a hard coded name for now
 writeData = True
-saveFil = True
+saveFil = False
 writeSpikeFrac = False
 #
 rawPathNames = 	[
-				'../data/rawData/dataQualityTests/8Hz/profiles/rotation0/*.txt',
 				'../data/rawData/dataQualityTests/8Hz/profiles/rotation45/*.txt',
 			]
 #
@@ -37,7 +36,6 @@ rawPathNames = 	[
 #		"../data/rawData/smoothPlate/8Hz/x400/171214_8Hz_x400/*.txt"
 filterType = [	#'movingAverageFilter',
 			'movingAverageFilter',
-			'movingAverageFilter',
 #			'movingAverageFilter',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses',
@@ -45,11 +43,14 @@ filterType = [	#'movingAverageFilter',
 #			'movingAverageFilterReynoldsStresses',
 #			'movingAverageFilterReynoldsStresses'
 		]
-filLoops = 	[0,2]#[1,2,1,2]# 0, 1, 2, 1, 2]
-NstdDev = 	[0,2]#[4,4,2,2]# 0, 4, 4, 2, 2]
-avWindow = [50,50]#,50]#[50, 50, 50, 50]
-probeRotationAngle = [0,45]
-saveNames = ['raw','w50_MA_high']#,'w50_MA_high']#['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#['basicMin','basicMed']#'raw','min','low','med','high']
+probeRotationAngle = [	44.0,]
+
+
+filLoops = 	[0]#[1,2,1,2]# 0, 1, 2, 1, 2]
+NstdDev = 	[0]#[4,4,2,2]# 0, 4, 4, 2, 2]
+avWindow = [50]#,50]#[50, 50, 50, 50]
+
+saveNames = ['raw44']#,'w50_MA_high']#['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#['basicMin','basicMed']#'raw','min','low','med','high']
 #
 if writeData == True:
 	for j in range(len(rawPathNames)):
@@ -62,21 +63,18 @@ if writeData == True:
 				tData = txtToDataFrame(fileName)
 #
 ##	3.	filter data
-				if saveFil == True:
-					tempSavePath = fileName.split('/')
-					filSaveNameEnd = str('/' + saveNames[i] + '/' + saveNames[i] + '_' + tempSavePath[-1].split('.txt')[0] + '.pkl')
-					tempSavePath[-1] = 'timeSeries'	
-					tempSavePath[tempSavePath.index('rawData')] = 'processedData'			
-					filSaveName = str('/'.join(tempSavePath)+filSaveNameEnd)
 #					print(rawSaveName)
 				if isinstance(tData,pd.DataFrame):
 					ttData = Filter(tData,filterType[i],'mean',avWindow[i],'none',filLoops[i],NstdDev[i])
-					if probeRotationAngle[j] == 45:
-						tttData = transform(ttData)
-					else:
-						tttData = ttData
+					tttData = transform(ttData,probeRotationAngle[j])
 #					print(filSaveName)
-					tttData.to_pickle(filSaveName)
+					if saveFil == True:
+						tempSavePath = fileName.split('/')
+						filSaveNameEnd = str('/' + saveNames[i] + '/' + saveNames[i] + '_' + tempSavePath[-1].split('.txt')[0] + '.pkl')
+						tempSavePath[-1] = 'timeSeries'	
+						tempSavePath[tempSavePath.index('rawData')] = 'processedData'			
+						filSaveName = str('/'.join(tempSavePath)+filSaveNameEnd)
+						tttData.to_pickle(filSaveName)
 #	
 ##	4.	apply averaging and append a final data series
 					dataNew  = timeAverage(tttData)

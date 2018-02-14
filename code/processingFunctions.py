@@ -142,15 +142,26 @@ def txtToDataFrame (fileName):
 		return np.nan
 ###########################################################################################
 #
-##		transform function to account for probe rotation of 45 deg
-def transform(df):
-	tUx = df['Ux'].as_matrix()
-	tUy = df['Uy'].as_matrix()
-	Ux = np.divide(1,np.sqrt(2))*(tUx-tUy)
-	Uy = np.divide(1,np.sqrt(2))*(tUx+tUy)
-	df['Ux'] = pd.Series(Ux)
-	df['Uy'] = pd.Series(Uy)
-	return df
+##		transform function to account for probe rotation
+def transform(df,alphaDeg):
+	alpha = alphaDeg*np.pi/180.0
+	tdf = df.copy()
+#
+##	Create tests to determine if transform is required:
+	if alphaDeg == 0:
+		return tdf
+	elif alphaDeg == 90:
+		tUx = -1.0*df['Uy'].as_matrix()
+		tUy = df['Ux'].as_matrix()
+		tdf['Ux'] = pd.Series(tUx)
+		tdf['Uy'] = pd.Series(tUy)
+		return tdf
+	else:	
+		tUx = df['Ux'].as_matrix()*np.cos(alpha) - df['Uy'].as_matrix()*np.sin(alpha)
+		tUy = df['Ux'].as_matrix()*np.sin(alpha) + df['Uy'].as_matrix()*np.cos(alpha)
+		tdf['Ux'] = pd.Series(tUx)
+		tdf['Uy'] = pd.Series(tUy)		
+		return tdf
 
 
 ###########################################################################################
