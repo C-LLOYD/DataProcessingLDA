@@ -20,16 +20,19 @@ def setPlotParams(axes):
 	plt.minorticks_on()
 	plt.grid(True, which='minor',alpha=0.6)
 	plt.grid(True, which='major',linewidth=0.9)
-	plt.xlim(0,40)
+#	plt.xlim(0,40)
 #	plt.ylim(-0.05,0.05)
 	axes.locator_params(nbins=4, axis='y')
 	
-def timeSeriesPlotter(df,saveName):
+def timeSeriesPlotter(df,dfMean,TS,saveName):
+	uPrime = df.Ux# - dfMean.UxMean.loc[dfMean.fileName == str(TS + '.txt')].as_matrix()
+	vPrime = df.Uy# - dfMean.UyMean.loc[dfMean.fileName == str(TS + '.txt')].as_matrix()
+	print(uPrime)
 	plt.rc('font', **{'family': 'serif', 'serif': ['Computer Modern'], 'size':'16'})
 	plt.rc('text', usetex=True)
 	fig = plt.figure()
 	ax1 = fig.add_subplot(2,1,1)
-	plt.plot(df.timeStamp,df.Ux,'xk')
+	plt.plot(df.timeStamp,uPrime,'-xk')
 	setPlotParams(ax1)
 	cur_axes = plt.gca()
 	cur_axes.axes.xaxis.set_ticklabels([])
@@ -38,15 +41,15 @@ def timeSeriesPlotter(df,saveName):
 	plt.tight_layout()
 ###########################
 	ax2 = fig.add_subplot(2,1,2)
-	plt.plot(df.timeStamp,df.Uy,'xk')
+	plt.plot(df.timeStamp,vPrime,'-xk')
 	setPlotParams(ax2)
 #plt.ylim(-0.05,0.05)
 	ax2.set_xlabel(r'$t$ (s)',fontsize='30')
 	plt.ylabel(r'$U_2$ (m/s)',fontsize='30')
 	plt.tight_layout()
 	plt.subplots_adjust(wspace=0.15, hspace=0.15)
-#	plt.show()
-	plt.savefig(saveName)
+	plt.show()
+#	plt.savefig(saveName)
 	plt.close()		
 
 
@@ -54,24 +57,28 @@ def timeSeriesPlotter(df,saveName):
 timeSeries = [
 ##			'.000001.pkl',
 ##			'.000002.pkl',
-			'.000010.pkl',
+			'4Hz_x400.000056',
 		]		
 
 fileNamePre = [
-			'../data/processedData/dataQualityTests/8Hz/profiles/rotation0/timeSeries/raw/raw_8hz_boundary_layer_rotation0',
-			'../data/processedData/dataQualityTests/8Hz/profiles/rotation45/timeSeries/raw/raw_8hz_boundary_layer_rotation45',
-		]
+	'../data/processedData/smoothPlate/4Hz/x400/180427_4Hz_x400/timeSeries/lowFil_0_rotation/lowFil_0_rotation_',
+#	'../data/processedData/smoothPlate/16Hz/x400/180426_16Hz_x400/timeSeries/raw/raw_',
+]
 
 saveNames = [
-			'../data/processedData/figures/dataQualityTests/rotation0_profile.png',
-			'../data/processedData/figures/dataQualityTests/rotation45_profile.png',
-		]
+	'../temp.png',
+]
+
+dfMean = pd.read_pickle('../data/processedData/smoothPlate/16Hz/x400/180426_16Hz_x400/16Hz_x400_averaged_lowFil.pkl')
+#dfMean = pd.read_pickle('../data/processedData/smoothPlate/4Hz/x400/180427_4Hz_x400/4Hz_x400_averaged_lowFil.pkl')
+
+
 
 for f in range(len(fileNamePre)):
-	for strEnd in range(len(timeSeries)):
-		fileName = str(fileNamePre[f] + timeSeries[strEnd])
+	for ts in range(len(timeSeries)):
+		fileName = str(fileNamePre[f] + timeSeries[ts] + '.pkl')
 		print(fileName)
 		data = pd.read_pickle(fileName)
-		timeSeriesPlotter(data,saveNames[f])
+		timeSeriesPlotter(data,dfMean,timeSeries[ts],saveNames[f])
 
 

@@ -1,0 +1,17 @@
+Description:
+	LDA data collected for smooth plate at 8Hz pump frequency at x=400mm and for 2min sampling time (grid 73 points).
+    
+    Purpose is to do some quick tests in order to measure prelim differences between plates. These will be repeated in the future.
+
+    Probe orientation 45 deg with 2.7 deg dipped beam
+
+	Temp 17.7 Deg 
+
+	Water is 6 Days old so there are no bubbles on the plate (Plate left in flume for full 6 days, water level untouched for that period). 
+
+	sample rate of ~30Hz max, seemingly clean data
+
+	Water level stayed at ~ 0.5cm above marker (consistent between )
+
+	Plate level 0.3mm / 400mm = 0.04 deg slope (measured previous day but z finder in right location) 
+

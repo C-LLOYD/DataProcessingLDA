@@ -23,7 +23,7 @@
 ##		Initialise python
 import numpy as np			#Numpy for efficient numerics
 import re				#Re for matching text in strings
-import matplotlib.pyplot as mpl		#matplotlib for plotting
+import matplotlib.pyplot as plt		#matplotlib for plotting
 from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 import pandas as pd			#Pandas for dataFrame construction
@@ -272,6 +272,101 @@ def timeAverage (dataRaw):
 #
 ##	Now need to write the data
 	return data;
+
+#########################################################################################
+####	Function Definition:		spatial Filter					###########
+####
+##	Function fits a polynomial to the mean sampling frequency in order to identify
+##	'false' data
+##	An additional data field is returned identifying these false z locations
+def spatialFilter(data):
+##	Initialise df boolean field
+	data["fil"] = True
+##	Test 1: Filter near wall data based on max expected sampling frequency
+	fMax = np.mean(data["fMean"].loc[data.z>5.0])
+	data["fil"].loc[data.z < 5.0] = (data.fMean < fMax)[data.z < 5.0]
+##	Test 2: Fit polynomial to data and filter out deviations from it
+	orderP = 2
+	upperBound = min(data.z)+4.0 
+	lowerBound = min(data.z)+1.0
+	TOL = 0.1
+	x = data.z[		data.fil].loc[(data.z[data.fil] > lowerBound) & (data.z[data.fil] < upperBound)]
+	y = data.fMean[	data.fil].loc[(data.z[data.fil] > lowerBound) & (data.z[data.fil] < upperBound)]
+	a = np.polyfit(np.log(x),y,orderP)
+	print(a)
+	if orderP == 2:
+		fTrue = np.log(data.z)**2*a[0]+a[1]*np.log(data.z) + a[2]
+	else:
+		fTrue = np.log(data.z)*a[0] + a[1]
+#
+	data["fil"].loc[data.z<upperBound] = (np.abs(data.fMean.loc[data.z<upperBound] - fTrue.loc[data.z<upperBound])/fTrue.loc[data.z<upperBound] < TOL) 
+	diff = data.fil[1:].as_matrix()*1 - data.fil[:-1].as_matrix()*1
+	start = np.nonzero(diff == 1)[0]+1
+#	print(data["fil"])
+	if len(start) > 1:
+		gaps = True
+		while gaps:
+			end = np.nonzero(diff == -1)[0]+1
+			oneGap = [False]*len(data)
+			zeroGap = [False]*len(data)
+			oneGap[start[0]:end[0]] = [True]*(end[0]-start[0])
+			zeroGap[end[0]:start[1]] = [True]*(start[1]-end[0])
+			if sum(oneGap) > sum(zeroGap):
+				data["fil"][end[0]:start[1]] = True
+			else:
+				data["fil"][start[0]:end[0]] = False
+			diff = data.fil[1:].as_matrix()*1 - data.fil[:-1].as_matrix()*1
+			start = np.nonzero(diff == 1)[0]+1
+			if len(start) > 1:
+				gaps = True
+			else:
+				gaps = False			
+	
+#	print(data["fil"])
+
+
+#	print(diff)
+#	gaps = True
+#	while gaps:
+#		if min(diff) == -1:
+#			for k in range(len(diff)):
+#				if diff[k] == 1:
+#					switch1 = k
+#				elif diff[k] == -1:
+#					switch2 = k
+#			if switch2 - switch1 < 3:
+#				data["fil"][switch1+1:switch2+1] = False
+#			else:
+#				data["fil"][switch1+1:switch2+1] = True				
+#			print(data["fil"])
+#		else:
+#			gaps = False
+
+		
+##	
+#	print(logic)
+#	print(fTrue,data.fMean)
+#	data["fil"] = logic.loc & data.z < 20
+#	print(data)
+#	data["fil"].loc[(data.z[data.fil] > 3) & (data.z[data.fil] < 20)] =
+#		np.abs(data.fMean.loc[(data.z[data.fil] > 3) & (data.z[data.fil] < 20)]
+#	 	    - fTrue.loc[(data.z[data.fil] > 3) & (data.z[data.fil] < 20)]
+#		)/	fTrue.loc[(data.z[data.fil] > 3) & (data.z[data.fil] < 20)] < 0.1
+	plt.semilogx(data.z,data.fMean,linestyle='',marker='x')
+	plt.semilogx(data.z,fTrue)
+	plt.semilogx(data.z[data.fil],data.fMean[data.fil],marker='o')
+	plt.show()
+		
+
+
+	return(data)
+
+
+
+
+
+
+
 
 
 ###########################################################################################
