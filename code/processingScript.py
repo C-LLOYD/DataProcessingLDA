@@ -28,8 +28,8 @@ from skinFrictionFunctions import choiEstimation as choiFunc
 ##	1.	Loop over data: Put this in at the end
 #
 ##	2.	import txt file: Give a hard coded name for now
-writeData = False
-saveFil = False
+writeData = True
+saveFil =True
 writeSpikeFrac = True
 writeSpatialFilter = False
 writeSkinFrictionEstimations = False
@@ -37,9 +37,9 @@ writeDenticleSkinFriction = False
 #
 rawPathNames = [
 #	'../data/rawData/smoothPlate/16Hz/x400/1703XX_16Hz_x400/*.txt',
-	'../data/rawData/smoothPlate/4Hz/x400/180530_4Hz_x400/*.txt',
-	'../data/rawData/smoothDenticles/4Hz/x400/180601_4Hz_x400/*.txt',
-	'../data/rawData/riblettedDenticles/4Hz/x400/180531_4Hz_x400/*.txt',
+	'../data/rawData/smoothDenticles/16Hz/x400/180824_16Hz_x400/*.txt',
+#	'../data/rawData/smoothDenticles/4Hz/x400/180601_4Hz_x400/*.txt',
+#	'../data/rawData/riblettedDenticles/4Hz/x400/180531_4Hz_x400/*.txt',
 ]
 #
 #"../data/rawData/smoothPlate/4Hz/x400/1703XX_4Hz_x400/*.txt"
@@ -101,6 +101,7 @@ if writeData == True:
 						data = dataNew
 					else:
 						data=data.append(dataNew)
+#			print(data)
 			dataSorted = data.sort_values(by=['z'])
 			print(dataSorted)
 			tempSavePath = fileName.split('/')
@@ -113,9 +114,9 @@ if writeData == True:
 #
 ##################################################################################################################################
 masterPath = [
-	"../data/processedData/smoothPlate/4Hz/x400/180530_4Hz_x400/",
-	"../data/processedData/smoothDenticles/4Hz/x400/180601_4Hz_x400/",
-	"../data/processedData/riblettedDenticles/4Hz/x400/180531_4Hz_x400/",
+	"../data/processedData/smoothDenticles/16Hz/x400/180824_16Hz_x400/",
+##	"../data/processedData/smoothDenticles/4Hz/x400/180601_4Hz_x400/",
+#	"../data/processedData/riblettedDenticles/4Hz/x400/180531_4Hz_x400/",
 #	"../data/processedData/riblettedDenticles/16Hz/x400/180426_16Hz_x400/",
 #	"../data/processedData/smoothPlate/16Hz/x400/180426_16Hz_x400/",
 #	"../data/processedData/riblettedDenticles/8Hz/x400/180322_8Hz_x400/",
@@ -127,9 +128,9 @@ masterPath = [
 filterType = ['lowFil']#['w50_MA_min', 'w50_MA_low','w50_MA_med','w50_MA_high']#[	'basicMin','basicMed']#'min','low','med','high'	]
 
 avDataFileName = [
-	'4Hz_x400_averaged',
-	'4Hz_x400_averaged',
-	'4Hz_x400_averaged',
+	'16Hz_x400_averaged',
+#	'4Hz_x400_averaged',
+#	'4Hz_x400_averaged',
 ]
 
 if writeSpikeFrac == True:

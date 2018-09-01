@@ -83,6 +83,10 @@ def choiEstimation(US,yS,uTauS,deltaStarS,UR,yTildeR):
 	U0S = np.mean(US[-4:])
 	plt.plot((U0S - US)/uTauS,yS*uTauS/(U0S*deltaStarS), marker='x')
 	plt.show()
+##
+##
+##		NOTE: Does it matter if we can't predict uTau properly for flat surface?
+##			Do we still get a correct relative error? 
 
 
 
