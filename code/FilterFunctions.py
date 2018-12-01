@@ -82,6 +82,8 @@ def Filter(data,filterMethod,averageMethod,window,writePaths_figures,Nloops,Nstd
 			resT	= resT[~Spikes]
 			s	= s[~Spikes]
 			print('Number of spikes = '+str(len(Ux)-len(UxNew))+' = '+str((float(len(Ux))-float(len(UxNew)))/(float(len(Ux))/100))+'%')
+#	
+	spikeFrac=(float(len(Ux))-float(len(UxNew)))/float(len(Ux))
 #			
 ##	Add variables to existing data frame.
 ##	Variables first need to be converted to 'pandas.series'
@@ -95,7 +97,7 @@ def Filter(data,filterMethod,averageMethod,window,writePaths_figures,Nloops,Nstd
 #
 ####		NEEDS CHANGING : FLOW RATE IS CURRENTLY HARD CODED INTO THE WRITE PATH!
 #	data2.to_pickle(writePath_dataFrames+'x_'+str(int(float(data.NXYZ[1])))+'_z_'+str(int(float(data.NXYZ[3])))+'_data_'+fileAppend)
-	return data2;
+	return [data2,spikeFrac];
 ##
 ##
 ##

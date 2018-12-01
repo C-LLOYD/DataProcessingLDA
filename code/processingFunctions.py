@@ -194,28 +194,24 @@ def txtToGridFrame (fileName):
 #	data = pd.DataFrame({'z':NXYZ[3]})
 	return NXYZ[3];
 ###########################################################################################
-####	Function Definition:		timeAverage				###########
+####	Function Definition:		timeAverageS					  ###########
+####				(S for scalar - i.e the output is a scalar quantity for each stat.
 ####
 ####		This function accounts for velocity bias in the data by 	
 ####		using the residence time as a weighting function		
 ####
 ####	This function calculates statistical quantities from the data frame input (as 
-####	described above). The statistical quantities are added as additional columns to the
-####	original data frame.
+####	described above). 
+####	A SEPARATE dataframe is returned that summarises the time series input
 ####
-####	Statistical quantities are calculated for each data entry using the previous values
-####	i.e this is used to check convergence of stats.
+####		Inputs:	dataFrame containing raw data
 ####
-####		Inputs:		dataFrame containing raw data and a write Path for the
-####				output dataFrame.
-####
-####		Output:		dataFrame containing raw data and addition rows for the
-####				statistics below. dataFrame stored in memory and saved.
+####		Output:	dataFrame containing time-averaged stats
 ####
 ####		Current stats: UxMean, UyMean, uxRMS, uyRMS, uv
 ####
 ###########################################################################################
-def timeAverage (dataRaw):
+def timeAverageS (dataRaw):
 #
 ##	Read in data frame and convert required variables to lists: This speeds up looping
 ##	process.
@@ -244,8 +240,8 @@ def timeAverage (dataRaw):
 	UyMean = np.divide(sum(Uy*resT),sum(resT))
 #	fMean = np.divide(sum(f*resT),sum(resT))
 #	fMean = np.mean(f)
-	uxRMS = np.sqrt(np.divide(sum(np.power((Ux-UxMean),2)*resT),sum(resT)))
-	uyRMS = np.sqrt(np.divide(sum(np.power((Uy-UyMean),2)*resT),sum(resT)))
+	uxRMS = np.sqrt(np.divide(sum(np.power((Ux-UxMean),2.0)*resT),sum(resT)))
+	uyRMS = np.sqrt(np.divide(sum(np.power((Uy-UyMean),2.0)*resT),sum(resT)))
 	uv = np.divide(sum((Ux-UxMean)*(Uy-UyMean)*resT),sum(resT))
 #	fStd = np.sqrt(np.divide(sum(np.power((f-fMean),2)*resT),sum(resT)))
 #	fStd = np.std(f)
@@ -257,6 +253,8 @@ def timeAverage (dataRaw):
 #		uv = np.nan
 ##	Create new dataFrame
 ##	NOTE	currently x position is assumed to be known from the file names ... 
+	x1 = pd.Series(float(dataRaw.NXYZ[1]))
+	x2 = pd.Series(float(dataRaw.NXYZ[2]))
 	z = pd.Series(float(dataRaw.NXYZ[3]))
 	UxMean = pd.Series(UxMean)
 	UyMean = pd.Series(UyMean)
@@ -267,10 +265,99 @@ def timeAverage (dataRaw):
 	fStd = pd.Series(fStd)
 #	print(fMean)
 #
-	data = pd.DataFrame({'z':z,'UxMean':UxMean, 'UyMean':UyMean, 'uxRMS':uxRMS, 'uyRMS':uyRMS, 'uv':uv,'fMean':fMean,'fStd':fStd})
+	data = pd.DataFrame({'x1':x1,'x2':x2,'z':z,'UxMean':UxMean, 'UyMean':UyMean, 'uxRMS':uxRMS, 'uyRMS':uyRMS, 'uv':uv,'fMean':fMean,'fStd':fStd})
 #	print(data)
 #
 ##	Now need to write the data
+	return data;
+
+###########################################################################################
+####	Function Definition:		timeAverageV	   				###########
+####				(V for vector - i.e the output is the same length as the input)
+####
+####		This function accounts for velocity bias in the data by 	
+####		using the residence time as a weighting function		
+####
+####	This function calculates statistical quantities from the data frame input (as 
+####	described above). The statistical quantities are added as additional columns to the
+####	original data frame.
+####
+####	Statistical quantities are calculated for each data entry using the previous values
+####	i.e this is used to check convergence of stats.
+####
+####		Inputs:		dataFrame containing raw data, avTime
+####
+####		Output:		dataFrame containing raw data and addition rows for the
+####				statistics below, and errors associated with shorter av time.
+####				 dataFrame stored in memory.
+####
+####		Current stats: UxMean, UyMean, uxRMS, uyRMS, uv
+####
+###########################################################################################
+def timeAverageV (data,averagingTime):
+#
+##	Read in data frame and convert required variables to lists: This speeds up looping
+##	process.
+	sampleN = data.sampleNumber.as_matrix()
+	resT = data.resTime.as_matrix()
+	Ux = data.Ux.as_matrix()
+	Uy = data.Uy.as_matrix()
+	t = data.timeStamp.as_matrix()
+#
+##	Loop through timeSeries and calculate stats for each sample time
+##	Note - for time, t, stats are associated with times 0 to t
+	UxMean,UyMean,uxRMS,uyRMS,uv = [],[],[],[],[]
+	for N in range(len(Ux)):
+		UxMeanNew, UyMeanNew, uxRMSNew, uyRMSNew, uvNew = [],[],[],[],[]
+#
+		UxMeanNew = np.divide(sum(Ux[0:N+1]*resT[0:N+1]),sum(resT[0:N+1]))
+		UyMeanNew = np.divide(sum(Uy[0:N+1]*resT[0:N+1]),sum(resT[0:N+1]))
+		uxRMSNew = np.sqrt(np.divide(sum(np.power((Ux[0:N+1]-UxMeanNew),2.0)*resT[0:N+1]),sum(resT[0:N+1])))
+		uyRMSNew = np.sqrt(np.divide(sum(np.power((Uy[0:N+1]-UyMeanNew),2.0)*resT[0:N+1]),sum(resT[0:N+1])))
+		uvNew = np.divide(sum((Ux[0:N+1]-UxMeanNew)*(Uy[0:N+1]-UyMeanNew)*resT[0:N+1]),sum(resT[0:N+1]))
+#
+		UxMean.append(UxMeanNew)
+		UyMean.append(UyMeanNew)
+		uxRMS.append(uxRMSNew)
+		uyRMS.append(uyRMSNew)
+		uv.append(uvNew)
+#
+##	Loop through averaging times again, but calculate errors associated with averaging for shoter time period
+	error_UxMean, error_UyMean, error_uxRMS, error_uyRMS, error_uv = [],[],[],[],[]
+	for i in range(int(t[-1]-averagingTime)):
+		UxNew = data.Ux.loc[(i < t[:]) & (t[:] < averagingTime + i)].as_matrix()
+		UyNew = data.Uy.loc[(i < t[:]) & (t[:] < averagingTime + i)].as_matrix()
+		resTime = data.resTime.loc[(i < t[:]) & (t[:] < averagingTime + i)].as_matrix()
+		mean_UxNew = 	np.divide(sum(UxNew*resTime),sum(resTime))
+		mean_UyNew = 	np.divide(sum(UyNew*resTime),sum(resTime))
+		RMS_ux	=	np.sqrt(np.divide(sum(np.power((UxNew-mean_UxNew),2.0)*resTime),sum(resTime)))
+		RMS_uy	=	np.sqrt(np.divide(sum(np.power((UyNew-mean_UyNew),2.0)*resTime),sum(resTime)))
+		uvt 	=	np.divide(sum((UxNew-mean_UxNew)*(UyNew-mean_UyNew)*resTime),sum(resTime))
+#
+		error_UxMean.append(np.power(mean_UxNew-UxMean[-1],2.0))
+		error_UyMean.append(np.power(mean_UyNew-UyMean[-1],2.0))
+		error_uxRMS.append(np.power(RMS_ux-uxRMS[-1],2.0))
+		error_uyRMS.append(np.power(RMS_uy-uyRMS[-1],2.0))
+		error_uv.append(np.power(uvt-uv[-1],2.0))
+
+	data['UxMean'] = pd.Series(UxMean)
+	data['UyMean'] = pd.Series(UyMean)
+	data['uxRMS'] = pd.Series(uxRMS)
+	data['uyRMS'] = pd.Series(uyRMS)
+	data['uv'] = pd.Series(uv)
+
+	data[str('e' + str(int(averagingTime)) + '_UxMean')] = pd.Series(np.sqrt(np.mean(error_UxMean)))
+	data[str('e' + str(int(averagingTime)) + '_UyMean')] = pd.Series(np.sqrt(np.mean(error_UyMean)))
+	data[str('e' + str(int(averagingTime)) + '_uxRMS')] = pd.Series(np.sqrt(np.mean(error_uxRMS)))
+	data[str('e' + str(int(averagingTime)) + '_uyRMS')] = pd.Series(np.sqrt(np.mean(error_uyRMS)))
+	data[str('e' + str(int(averagingTime)) + '_uv')] = pd.Series(np.sqrt(np.mean(error_uv)))
+
+	print(data[str('e' + str(int(averagingTime)) + '_UxMean')][0]*100/UxMean[-1],
+	data[str('e' + str(int(averagingTime)) + '_UyMean')][0]*100/UyMean[-1],
+	data[str('e' + str(int(averagingTime)) + '_uxRMS')][0]*100/uxRMS[-1],
+	data[str('e' + str(int(averagingTime)) + '_uyRMS')][0]*100/uyRMS[-1],
+	data[str('e' + str(int(averagingTime)) + '_uv')][0]*100/uv[-1])
+
 	return data;
 
 #########################################################################################

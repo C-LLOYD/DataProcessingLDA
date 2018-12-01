@@ -1,0 +1,11 @@
+Description:
+	LDA data collected for smooth plate at 4Hz pump frequency at 3 profile locations and for 200 sec sampling time (grid ~76 points).
+
+    We investigate spatial dependency of profile collection over ~single denticle
+
+	Temp change from 17.7 Deg to 17.9 Deg over last 3 hrs of sampling (assume av ~17.8)
+
+	Water is 4 Days old so there are no bubbles on the plate (plate levelled using granite parallels). 
+
+	Generally sample rate of < 20Hz consistently
+

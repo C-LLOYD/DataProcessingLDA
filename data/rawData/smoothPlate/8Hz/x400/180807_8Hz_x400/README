@@ -1,17 +1,10 @@
 Description:
-	LDA data collected for smooth plate at 8Hz pump frequency at x=400mm and for 200 sec  sampling time (grid 73 points).
-    
-    These are final BL experiments for flat plate.
+	LDA data collected for smooth plate at 8Hz pump frequency at x=400mm and for 200 sec sampling time (grid ~73 points).
+	Final data collection of profiles
 
-    Probe orientation 45 deg with 2.7 deg dipped beam
+	Temp change from 20.5 Deg to 21.0 Deg over day
 
-	Temp change from 20.5 Deg to 21 Deg over course of day 
+	Water is 1 Day old so there are no bubbles on the plate. 
 
-	Water is 1 Days old so there are no bubbles on the plate  
-
-	sample rate of ~15-20Hz max, seemingly clean data (lower than previous possilby due to beam alignment or better water quality)
-
-	Water level constant but leak at back of flume - collected water periodically added back in
-
-	Plate level only checked using spirit level and parallels
+	Generally sample rate of < 20Hz consistently
 

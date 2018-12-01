@@ -47,10 +47,15 @@ def movingAverageFilter(U,resT,window,data,method,writePaths_figures,VariableNam
 #
 ##	Test : set up range such that if Umeans-2*std < U < Umeans+2*std we use Unew = U, Unew[test] = np.nan
 	spikes = (U<Umeans-Nstds*std)+(U>Umeans+Nstds*std)
+#
+##	for visualisation of filter uncomment below:
+#	temp = U.copy()
+#	temp[~spikes] = np.nan
 #	plt.plot(U,linestyle='',marker='.')
+#	plt.plot(temp,linestyle='',marker='o')
 #	plt.plot(Umeans)
-#	plt.plot(Umeans-2*std)
-#	plt.plot(Umeans+2*std)
+#	plt.plot(Umeans-Nstds*std)
+#	plt.plot(Umeans+Nstds*std)
 #	plt.show()
 #	plt.close()
 	return spikes

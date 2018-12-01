@@ -21,7 +21,7 @@ fileNameFlatPlate  = [
 		'../data/processedData/smoothPlate/8Hz/x400/180322_8Hz_x400/8Hz_x400_averaged_lowFil.pkl',
 		'../data/processedData/smoothPlate/16Hz/x400/180426_16Hz_x400/16Hz_x400_averaged_lowFil.pkl',
 ##	5 min Av:
-		'../data/processedData/smoothPlate/4Hz/x400/180530_4Hz_x400/4Hz_x400_averaged_lowFil.pkl',
+		'../data/processedData/smoothPlate/4Hz/x400/180530_4Hz_x400/4Hz_x400_averaged_raw.pkl',
 ##	200 sec Av:
 		'../data/processedData/smoothPlate/8Hz/x400/180807_8Hz_x400/8Hz_x400_averaged_lowFil.pkl',
 		'../data/processedData/smoothPlate/12Hz/x400/180814_12Hz_x400/12Hz_x400_averaged_lowFil.pkl',
@@ -34,7 +34,7 @@ fileNameRibletted  = [
 		'../data/processedData/riblettedDenticles/8Hz/x400/180322_8Hz_x400/8Hz_x400_averaged_lowFil.pkl',
 		'../data/processedData/riblettedDenticles/16Hz/x400/180426_16Hz_x400/16Hz_x400_averaged_lowFil.pkl',
 ##	5 min Av:
-		'../data/processedData/riblettedDenticles/4Hz/x400/180531_4Hz_x400/4Hz_x400_averaged_lowFil.pkl',
+		'../data/processedData/riblettedDenticles/4Hz/x400/180531_4Hz_x400/4Hz_x400_averaged_raw.pkl',
 ##	200 sec Av:
 		'../data/processedData/riblettedDenticles/8Hz/x400/180808_8Hz_x400/8Hz_x400_averaged_lowFil.pkl',
 		'../data/processedData/riblettedDenticles/12Hz/x400/180815_12Hz_x400/12Hz_x400_averaged_lowFil.pkl',
@@ -43,7 +43,7 @@ fileNameRibletted  = [
 
 fileNameSmooth = [
 ##	5 min Av:
-		'../data/processedData/smoothDenticles/4Hz/x400/180601_4Hz_x400/4Hz_x400_averaged_lowFil.pkl',
+		'../data/processedData/smoothDenticles/4Hz/x400/180601_4Hz_x400/4Hz_x400_averaged_raw.pkl',
 ##	200 sec Av:
 		'../data/processedData/smoothDenticles/8Hz/x400/180809_8Hz_x400/8Hz_x400_averaged_lowFil.pkl',
 		'../data/processedData/smoothDenticles/12Hz/x400/180816_12Hz_x400/12Hz_x400_averaged_lowFil.pkl',
@@ -55,7 +55,7 @@ TSlabels =  ['flat plate',
 		 'smooth denticles',
 		]
 
-markers = ['x','o','v','s','*','+','^','.','<','>','p']
+markers = ['o','v','s','*','+','^','.','<','>','p','x',]
 
 ###########################################################################################################
 ###########			Plotter function
@@ -65,7 +65,7 @@ def plotter(X,Y,dataLabels,markers,xLabel,yLabel,writeName):
 	fig = plt.figure()
 	ax = fig.add_subplot(1,1,1)
 	for i in range(len(X)):
-		ax.semilogx(X[i],Y[i],label = dataLabels[i], marker=markers[i], linestyle='-')#, color = 'k')
+		ax.semilogx(X[i],Y[i],label = dataLabels[i], marker=markers[i], linestyle='')#, color = 'k')
 #		ax.plot(X[i],Y[i],label = dataLabels[i], marker=markers[i], linestyle='-')#, color = 'k')
 	ax.set_xlabel(xLabel,fontsize='30')
 	ax.set_ylabel(yLabel,fontsize='30')#,rotation=0,labelpad=45)
@@ -76,7 +76,11 @@ def plotter(X,Y,dataLabels,markers,xLabel,yLabel,writeName):
 #		ax.set_position([box.x0, box.y0*1.2, box.width * 0.75, box.height])
 		ax.legend(loc='upper left',numpoints=1,prop={'size':18})#, bbox_to_anchor=(1, 0.5),numpoints=1)	
 #		plt.legend(loc = 'best')#handles=[plot,],loc=4,prop={'size':18},ncol=1)
-#	ax.set_xlim([0.1, 180])
+	if np.mean(Y[i]) > 0:
+		ax.set_ylim([0, 1.05*np.max(Y[i])])	
+	else:
+		ax.set_ylim([1.05*np.min(Y[i]),1.05*np.max(Y[i])])
+		
 	plt.minorticks_on()
 	plt.grid(True, which='minor',alpha=0.6)
 	plt.grid(True, which='major',linewidth=0.9)
@@ -120,8 +124,6 @@ dataSmooth = [
 #
 #var = ["fMean"]
 #ylabels = ['fMean']
-var = ["UxMean","uxRMS","uyRMS","uv"]
-ylabels = [r'$\overline{U}$ (m/s)',r"$\sqrt{\overline{u'u'}}$ (m/s)",r"$\sqrt{\overline{v'v'}}$ (m/s)",r"$\overline{u'v'}$, (m\textsuperscript{2}/s\textsuperscript{2})"]
 
 writePath = str('../data/processedData/figures/1803XX_profiles/')
 writeNamesPre = ['4Hz']#,'8Hz','16Hz']
@@ -168,10 +170,9 @@ if temp == True:
 ##
 ##		Comparing 8Hz smooth plate profiles at diff samping rates
 dataFlatPlates = [
-#	pd.read_pickle(fileNameFlatPlate[3]),
-#	pd.read_pickle(fileNameFlatPlate[4]),
-#	pd.read_pickle(fileNameFlatPlate[5]),
-	pd.read_pickle(fileNameFlatPlate[2]),
+	pd.read_pickle(fileNameFlatPlate[3]),
+	pd.read_pickle(fileNameFlatPlate[4]),
+	pd.read_pickle(fileNameFlatPlate[5]),
 	pd.read_pickle(fileNameFlatPlate[6]),	
 ]
 
@@ -189,51 +190,61 @@ dataSmo = [
 	pd.read_pickle(fileNameSmooth[3])
 ]
 
-writePath = str('../data/processedData/figures/180807_profiles/')
-writeNamesPre = ['4Hz']#,'8Hz','16Hz']
+var = [
+#	"UyMean",
+#	"uxRMS",
+	"uyRMS",
+#	"uv"
+]
+ylabels = [r'$\overline{U}$ (m/s)',r"$\sqrt{\overline{u'u'}}$ (m/s)",r"$\sqrt{\overline{v'v'}}$ (m/s)",r"$\overline{u'v'}$, (m\textsuperscript{2}/s\textsuperscript{2})"]
+
+writePath = str('../data/processedData/figures/181011_profiles/')
+writeNamesPre = ['4Hz','8Hz','12Hz','16Hz']
 writeNames = [
 	str('Uprofile_lowFil.png'),
 	str('uRMSprofile_lowFil.png'),
 	str('vRMSprofile_lowFil.png'),
 	str('uvProfile_lowFil.png')
 ]
-legend = True
-for i in range(len(var)):
-	plotter(
+legend = False
+for d in range(len(dataFlatPlates)):
+	for i in range(len(var)):
+		plotter(
 #				[	dataRibletted[0]["z"],
 #					dataRibletted[1]["z"],
-		[
+			[
 #			dataFlatPlates[0]["z"]*dataFlatPlates[0]["fil"],
 #			dataRib[0]["z"],
 #			dataSmo[0]["z"],
 #			dataFlatPlates[0]["z"],
-			dataFlatPlates[1]["z"],
-			dataRib[3]["z"],
-			dataSmo[3]["z"]
-		],
-		[
-#			dataFlatPlates[0][var[i]]*dataFlatPlates[0]["fil"],
-#			dataRib[0][var[i]],
-#			dataSmo[0][var[i]],
-#			dataFlatPlates[0][var[i]],
-			dataFlatPlates[1][var[i]],
-			dataRib[3][var[i]],
-			dataSmo[3][var[i]]
-		],
-		[
-#			'Rib',
-#			'Smo',
-			'Flat',
-			'Rib',
-			'Smo'
-		],
-		[
-			markers[0],
-			markers[1],
-			markers[2]
-		],
-		r'$y$ (mm)', ylabels[i], str(writePath + writeNames[i])
-	)
-	legend = False
+#			dataFlatPlates[d]["z"],
+			dataRib[3]["z"]-1.0,
+			dataSmo[3]["z"]-1.0
+			],
+			[
+	#			dataFlatPlates[0][var[i]]*dataFlatPlates[0]["fil"],
+	#			dataRib[0][var[i]],
+	#			dataSmo[0][var[i]],
+	#			dataFlatPlates[0][var[i]],
+#				dataFlatPlates[d][var[i]],
+				dataRib[3][var[i]],
+				dataSmo[3][var[i]]
+			],
+			[
+	#			'Rib',
+	#			'Smo',
+#				'Flat',
+				'Rib',
+				'Smo'
+			],
+			[
+#				markers[0],
+				markers[1],
+				markers[2]
+			],
+			r'$y$ (mm)', ylabels[i], str(writePath + writeNamesPre[d] +  writeNames[i])
+		)
+		legend = False
+
 
 
