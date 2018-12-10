@@ -495,34 +495,78 @@ if writeDenticlePlateErrorBars == True:
 #####
 ##		
 ##
-testing = False
+testing = True
 if testing == True:
-	dfName = '../data/processedData/smoothPlate/4Hz/x400/180530_4Hz_x400/4Hz_x400_averaged_lowFil.pkl'
+#	dfName = '../data/processedData/smoothPlate/4Hz/x400/180530_4Hz_x400/4Hz_x400_averaged_lowFil.pkl'
 #	dfName = '../data/processedData/smoothPlate/8Hz/x400/180807_8Hz_x400/8Hz_x400_averaged_lowFil.pkl'
-#	dfName = '../data/processedData/smoothPlate/12Hz/x400/180814_12Hz_x400/12Hz_x400_averaged_lowFil.pkl'
+	dfName = '../data/processedData/smoothPlate/12Hz/x400/180814_12Hz_x400/12Hz_x400_averaged_lowFil.pkl'
 #	dfName = '../data/processedData/smoothPlate/16Hz/x400/180822_16Hz_x400/16Hz_x400_averaged_lowFil.pkl'
-	nu = 1.0171e-6
+#	nu = 1.0171e-6
 #	nu = 9.842e-7
-#	nu = 1.006e-6,
+	nu = 1.006e-6,
 #	nu = 9.807e-7
 	df = pd.read_pickle(dfName)
 	U = df.UxMean.loc[df.fil].as_matrix()
 	yTilde = df.z.loc[df.fil].as_matrix()*1e-3
 #	lim = 5e-3
 	from flatPlateParameterisationFunctions import compFit
+	from flatPlateParameterisationFunctions import compositeProfile as comp
 	import scipy.optimize as opt
-	x0 = [5e-3,5e-4,0.4,12.0]
-	temp = opt.minimize(compFit, x0, args=(U, yTilde, nu, 1, 'none'), method='Nelder-Mead',tol=1e-16,options={'disp':True,'xtol':1e-16,'ftol':1e-16})
-	print(temp)
+	x0 = [1e-3,1e-5,0.3,5.0]
+	x1 = [40e-3,1e-3,0.5,18.0]
+#	opt.show_options(solver='minimize', method='Nelder-Mead')#, disp=True)
+#	temp = opt.minimize(compFit, x0, args=(U, yTilde, nu, 1, 'none'), method='Nelder-Mead',tol=1e-3,options={'disp':True,'xtol':1e-3,'ftol':1e-3})
+#	temp = opt.minimize(compFit, x0, args=(U, yTilde, nu, 1, 'none'), method='Nelder-Mead',tol=1e-3,options={'adaptive':True,'disp':True,'xtol':1e-3,'ftol':1e-3})
+#	temp = opt.differential_evolution(compFit, [(3e-3,8e-3),(1e-4,1e-3),(0.3,0.5),(8.0,18.0)],args=(U, yTilde, nu, 1, 'none'))
+	import matplotlib.pyplot as plt
+	from scipy.optimize._differentialevolution import DifferentialEvolutionSolver as DES
+	solver = DES(compFit, [(3e-3,40e-3),(1e-4,1e-3),(0.3,0.5),(8.0,18.0)],args=(U, yTilde, nu, 1, 'none'),mutation=0.5,popsize=200,disp=True)#,callback=True,strategy='rand2bin'),recombination=0.5)
+	for i in range(1000):
+   		x, e = next(solver)
+   		# access the energies
+#		print(solver.population_energies)
+		uTau = x[0]	
+		dy = x[1]
+		kappa = x[2]
+		a = x[3]
+		[delta,wakeCoeffs,UPlus,yPlus] = compFit(x,U,yTilde,nu,1,'none',flag=True)
+		Ufit1 = comp(UPlus,yPlus,delta*uTau/nu,kappa,nu,a,1,'none')		
+		plt.semilogx(yPlus,UPlus,linestyle='',marker='o')	
+		plt.plot(yPlus,Ufit1)
+#		plt.ylim([0,20])
+		print(i,x,e)
+#		plt.plot(i,e,'rx')
+#		plt.plot(i,x[0],'kx')
+#		plt.plot(i,x[1],'kx')
+#		plt.plot(i,x[2],'kx')
+#		plt.plot(i,x[3],'kx')
+		plt.draw()
+		plt.pause(1e-17)
+#		time.sleep(0.1)
+
+
+#	print(temp)
+#	[delta,wakeCoeffs,UPlus,yPlus] = compFit(temp.x,U,yTilde,nu,1,'none',flag=True)
 #	X0 = [1e-4,1e-4]
 #	temp = opt.minimize(genericPolyFit, [X0], args=(yTilde,U,lim), method='Nelder-Mead',tol=1e-16,
 #			 			options={'disp':True,'xtol':1e-16,'ftol':1e-16})
 #	print(temp)
-#	Ufit = genericPolyFit(temp.x,yTilde,U,lim,flag=True)	
+#	uTau = temp.x[0]
+#	dy = temp.x[1]
+#	kappa = temp.x[2]
+#	a = temp.x[3]
+
+#	from flatPlateParameterisationFunctions import compositeProfile
+#	Ufit1 = compositeProfile(UPlus,yPlus,delta*uTau/nu,kappa,nu,a,1,'none')
+#	Ufit2 = wakeCoeffs[0]*np.log(yPlus) + wakeCoeffs[1]*yPlus**3 + wakeCoeffs[2]*yPlus**2 + wakeCoeffs[3]*yPlus + wakeCoeffs[4]
 #	import matplotlib.pyplot as plt
-#	plt.plot(yTilde-temp.x[0],U)
-#	plt.plot(yTilde[yTilde>lim]-temp.x[0],Ufit)
-#	plt.show()
+#	plt.semilogx(yPlus,UPlus,linestyle='',marker='o')
+#	plt.plot(yPlus,Ufit1)
+#	plt.plot(yPlus,Ufit2)
+#	plt.ylim([0,20])
+#	plt.xlabel('y+')
+#	plt.ylabel('U+')
+#	plt.savefig('wakefit2.png')
 	
 ##################################################################################################################################
 #####			useful - execfile('processingScript.py')
@@ -662,7 +706,7 @@ if testing == True:
 
 
 
-testing = True
+testing = False
 if testing == True:
 ##	Set up variables
 #

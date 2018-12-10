@@ -81,36 +81,40 @@ def compositeLeastSquares(UPlus,yPlus,deltaPlus,kappa,nu,a,PI,method):
 #####		compFit:	Input initial conditions and a method
 import matplotlib.pyplot as plt
 def compFit(x0,uTilde, yTilde, nu, PI, method, flag=False):
-	y = yTilde - x0[1]
-	temp = opt.minimize(deltaFunc,1.0,args=(y,uTilde), method='Nelder-Mead',tol=1e-3,
-			 			options={'disp':False,'xtol':1e-3,'ftol':1e-3})
-	coeffs = deltaFunc(temp.x,yTilde,uTilde,flag=True)
-#	print(coeffs)
-	U99 = 0.99*max(uTilde)
-#	print('cont')
-	temp2 = opt.minimize(deltaFunc2,30e-3,args=(temp.x,coeffs,U99), method='Nelder-Mead',tol=1e-16,
-						options={'disp':False,'xtol':1e-16,'ftol':1e-16})
-#	delta = 37e-3
-	delta = temp2.x
-#	delta = y[uTilde>0.98*np.mean(uTilde[-4:])][0]
-#	Ufit = temp.x*np.log(y) + coeffs[0]*y**3 + coeffs[1]*y**2 + coeffs[2]*y + coeffs[3]
-#	plt.plot(y,uTilde)
-#	plt.plot(y,Ufit)
-#	plt.scatter(delta,U99)
-#	plt.show()
-
 	UPlus = uTilde/x0[0]
 	yPlus = (yTilde - x0[1])*x0[0]/nu
-	deltaPlus = delta*x0[0]/nu
+	temp = opt.minimize(deltaFunc,1.0,args=(yPlus,UPlus), method='Nelder-Mead',tol=1e-3,
+			 			options={'disp':False,'xtol':1e-3,'ftol':1e-3})
+	coeffs = deltaFunc(temp.x,yPlus,UPlus,flag=True)
+#	print(coeffs)
+	U99 = 0.99*max(UPlus)
+#	print('cont')
+	temp2 = opt.minimize(deltaFunc2,200,args=(temp.x,coeffs,U99), method='Nelder-Mead',tol=1e-3,
+						options={'disp':False,'xtol':1e-3,'ftol':1e-3})
+#	delta = 37e-3
+	deltaPlus = temp2.x
+#	delta2 = yPlus[UPlus>0.98*np.mean(UPlus[-4:])][0]
+#	Ufit = temp.x*np.log(yPlus) + coeffs[0]*yPlus**3 + coeffs[1]*yPlus**2 + coeffs[2]*yPlus + coeffs[3]
+#	plt.plot(yPlus,UPlus,linestyle='',marker='.')
+#	plt.plot(yPlus,Ufit)
+#	plt.scatter(deltaPlus,U99,marker='x',s=40)
+#	plt.scatter(delta2,0.98*np.mean(UPlus[-4:]),marker='*',s=40)
+#	plt.xlabel('y+')
+#	plt.ylabel('U+')
+#	plt.savefig('wakefit.png')
+#	plt.close()
+
+	delta = deltaPlus*nu/x0[0]
+#	deltaPlus = delta*x0[0]/nu
 #	print(delta)
 	if flag==False:
 		return compositeLeastSquares(UPlus,yPlus,deltaPlus,x0[2],nu, x0[3], PI, method)
 	else:
-		wakeCoeffs = [temp,coeffs]
-		return [delta,wakeCoeffs,UPlus,yPlus]
+		newCoeffs = np.insert(coeffs,0,temp.x[0])
+		return [delta,newCoeffs,UPlus,yPlus]
 ###############################################################################
 #####		deltaFunc:	Input some params, returns delta
-def deltaFunc(X0,yTilde,UTilde,lim=20e-3,flag=False):
+def deltaFunc(X0,yTilde,UTilde,lim=100,flag=False):
 	y = yTilde[yTilde>lim]
 	U = UTilde[yTilde>lim]
 	coeffs = np.polyfit(y,U-X0*np.log(y),3)
